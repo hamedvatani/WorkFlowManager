@@ -24,4 +24,8 @@
     <ProjectReference Include="..\WorkFlowManager.Core\WorkFlowManager.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>
