@@ -1,4 +1,5 @@
 ﻿using WorkFlowManager.Core.Interfaces;
+using WorkFlowManager.Core.Models;
 
 namespace Samples.ShoppigCard;
 
@@ -13,6 +14,7 @@ public class WorkFlowBiz
 
     public void CreateWorkFlow()
     {
-        
+        if (wfManager.GetWorkFlow("MyWorkFlow") != null)
+            return;
     }
 }
