@@ -1,3 +1,4 @@
+using Samples.ShoppigCard;
 using WorkFlowManager.Core;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddWorkFlowService(cfg => cfg.UseSqlite("WFM.db"));
+builder.Services.AddScoped<IWorkFlowBiz, WorkFlowBiz>();
 
 var app = builder.Build();
 

@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/WorkFlowManager/Samples.StartupApi/WFM.db-wal
+/WorkFlowManager/Samples.StartupApi/WFM.db-shm
+/WorkFlowManager/Samples.StartupApi/WFM.db

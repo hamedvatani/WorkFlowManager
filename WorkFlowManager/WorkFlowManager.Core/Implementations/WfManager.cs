@@ -14,21 +14,24 @@ public class WfManager:IWfManager
         context.Database.EnsureCreated();
     }
 
-    public WorkFlow? GetWorkFlow(string name)
+    public List<WorkFlow> GetAllWorkFlows()
     {
-        return _context.WorkFlows.FirstOrDefault(w => string.Equals(w.Name, name, StringComparison.CurrentCultureIgnoreCase));
+        return _context.WorkFlows.ToList();
     }
 
-    public WorkFlow CreateWorkFlow(string name)
+    public WorkFlow? GetWorkFlow(string name)
     {
-        var retVal = new WorkFlow {Name = name};
+        return _context.WorkFlows.FirstOrDefault(w => w.Name == name);
+    }
+
+    public WorkFlow CreateOrGetWorkFlow(string name)
+    {
+        var retVal = GetWorkFlow(name);
+        if (retVal != null)
+            return retVal;
+        retVal = new WorkFlow {Name = name};
         _context.WorkFlows.Add(retVal);
         _context.SaveChanges();
         return retVal;
-    }
-
-    public Step CreateStep(WorkFlowStepTypeEnum type)
-    {
-        throw new NotImplementedException();
     }
 }

@@ -1,9 +1,15 @@
-﻿namespace WorkFlowManager.Core.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using WorkFlowManager.Core.Models.Steps;
 
-public abstract class Step
+namespace WorkFlowManager.Core.Models;
+
+public class Step : BaseModel
 {
-    public void SetNextStep(Step nextStep,string condition)
-    {
-        throw new NotImplementedException();
-    }
+    public StepTypeEnum StepType { get; set; }
+    public string Name { get; set; } = "";
+    public string Description { get; set; } = "";
+    public int WorkFlowId { get; set; }
+    
+    [ForeignKey("WorkFlowId")]
+    public WorkFlow? WorkFlow { get; set; }
 }

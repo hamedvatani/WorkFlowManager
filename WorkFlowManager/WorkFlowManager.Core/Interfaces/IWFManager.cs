@@ -4,7 +4,7 @@ namespace WorkFlowManager.Core.Interfaces;
 
 public interface IWfManager
 {
+    List<WorkFlow> GetAllWorkFlows();
     WorkFlow? GetWorkFlow(string name);
-    WorkFlow CreateWorkFlow(string name);
-    Step CreateStep(WorkFlowStepTypeEnum type);
+    WorkFlow CreateOrGetWorkFlow(string name);
 }

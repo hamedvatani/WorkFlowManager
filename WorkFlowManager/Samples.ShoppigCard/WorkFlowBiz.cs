@@ -3,7 +3,7 @@ using WorkFlowManager.Core.Models;
 
 namespace Samples.ShoppigCard;
 
-public class WorkFlowBiz
+public class WorkFlowBiz:IWorkFlowBiz
 {
     private IWfManager wfManager;
 
@@ -12,11 +12,13 @@ public class WorkFlowBiz
         this.wfManager = wfManager;
     }
 
-    public void CreateWorkFlow()
+    public void CreateMyWorkFlow()
     {
-        if (wfManager.GetWorkFlow("MyWorkFlow") != null)
-            return;
-        var wf = wfManager.CreateWorkFlow("MyWorkFlow");
+        var wf = wfManager.CreateOrGetWorkFlow("MyWorkFlow");
+
+
+
+        // var wf = wfManager.CreateWorkFlow("MyWorkFlow");
         // var startStep = wfManager.CreateStep(WorkFlowStepTypeEnum.Start);
         // wf.SetStartStep(startStep);
         // var isExistsStep = wfManager.CreateStep(WorkFlowStepTypeEnum.Decision);
