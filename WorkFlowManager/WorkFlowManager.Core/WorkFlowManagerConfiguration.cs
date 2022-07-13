@@ -4,8 +4,8 @@ public class WorkFlowManagerConfiguration
 {
     public bool UsingSqlServer { get; set; }
     public bool UsingSqlite { get; set; }
-    public string SqlServerConnectionString { get; set; }
-    public string SqliteFilename { get; set; }
+    public string SqlServerConnectionString { get; set; } = "";
+    public string SqliteFilename { get; set; } = "";
 
     public void UseSqlServer(string connectionString)
     {

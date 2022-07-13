@@ -10,28 +10,12 @@ namespace Samples.StartupApi.Controllers;
 public class WorkFlowController : ControllerBase
 {
     private readonly ILogger<WorkFlowController> _logger;
-    private readonly IWfManager wfManager;
     private readonly IWorkFlowBiz biz;
 
-    public WorkFlowController(ILogger<WorkFlowController> logger, IWfManager wfManager, IWorkFlowBiz biz)
+    public WorkFlowController(ILogger<WorkFlowController> logger, IWorkFlowBiz biz)
     {
         _logger = logger;
-        this.wfManager = wfManager;
         this.biz = biz;
-    }
-
-    [HttpGet]
-    [Route("GetAllWorkFlows")]
-    public ActionResult<List<WorkFlow>> GetAllWorkFlows()
-    {
-        return Ok(wfManager.GetAllWorkFlows());
-    }
-
-    [HttpGet]
-    [Route("GetWorkFlow")]
-    public ActionResult<WorkFlow?> GetWorkFlow(string name)
-    {
-        return Ok(wfManager.GetWorkFlow(name));
     }
 
     [HttpGet]

@@ -14,26 +14,24 @@ public class WorkFlowBiz:IWorkFlowBiz
 
     public void CreateMyWorkFlow()
     {
-        var wf = wfManager.CreateOrGetWorkFlow("MyWorkFlow");
+        wfManager.DeleteWorkFlow("MyWorkFlow");
 
+        var wf = wfManager.CreateWorkFlow("MyWorkFlow");
 
+        var startStep = wfManager.CreateStep(wf, StepTypeEnum.Start, "Start", "Start");
+        var isExistsStep = wfManager.CreateStep(wf, StepTypeEnum.Condition, "IsExists", "Check Existence of Shopping Card Items");
+        var doShoppingStep = wfManager.CreateStep(wf, StepTypeEnum.Process, "DoShopping", "Do Shopping");
+        var errorReportStep = wfManager.CreateStep(wf, StepTypeEnum.Process, "ErrorReport", "Report Error");
+        var getAcceptenceStep = wfManager.CreateStep(wf, StepTypeEnum.Condition, "GetAcceptence", "Double Check With User");
+        var endStep = wfManager.CreateStep(wf, StepTypeEnum.End, "End", "End");
 
-        // var wf = wfManager.CreateWorkFlow("MyWorkFlow");
-        // var startStep = wfManager.CreateStep(WorkFlowStepTypeEnum.Start);
-        // wf.SetStartStep(startStep);
-        // var isExistsStep = wfManager.CreateStep(WorkFlowStepTypeEnum.Decision);
-        // startStep.SetNextStep(isExistsStep, "");
-        // var doShoppingStep = wfManager.CreateStep(WorkFlowStepTypeEnum.Process);
-        // isExistsStep.SetNextStep(doShoppingStep, "Yes");
-        // var errorReportStep = wfManager.CreateStep(WorkFlowStepTypeEnum.Process);
-        // isExistsStep.SetNextStep(errorReportStep, "No");
-        // var getAcceptenceStep = wfManager.CreateStep(WorkFlowStepTypeEnum.Process);
-        // isExistsStep.SetNextStep(getAcceptenceStep, "Semi");
-        // getAcceptenceStep.SetNextStep(doShoppingStep, "Accept");
-        // getAcceptenceStep.SetNextStep(errorReportStep, "Reject");
-        // var endStep = wfManager.CreateStep(WorkFlowStepTypeEnum.End);
-        // wf.SetEndStep(endStep);
-        // errorReportStep.SetNextStep(endStep, "");
-        // doShoppingStep.SetNextStep(endStep, "");
+        wfManager.CreateFlow(startStep, isExistsStep, "");
+        wfManager.CreateFlow(isExistsStep, doShoppingStep, "Yes");
+        wfManager.CreateFlow(isExistsStep, errorReportStep, "No");
+        wfManager.CreateFlow(isExistsStep, getAcceptenceStep, "Semi");
+        wfManager.CreateFlow(doShoppingStep, endStep, "");
+        wfManager.CreateFlow(errorReportStep, endStep, "");
+        wfManager.CreateFlow(getAcceptenceStep, doShoppingStep, "Accept");
+        wfManager.CreateFlow(getAcceptenceStep, errorReportStep, "Reject");
     }
 }

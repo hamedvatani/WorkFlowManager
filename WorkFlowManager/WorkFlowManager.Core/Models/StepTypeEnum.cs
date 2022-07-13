@@ -1,4 +1,4 @@
-﻿namespace WorkFlowManager.Core.Models.Steps;
+﻿namespace WorkFlowManager.Core.Models;
 
 public enum StepTypeEnum
 {
