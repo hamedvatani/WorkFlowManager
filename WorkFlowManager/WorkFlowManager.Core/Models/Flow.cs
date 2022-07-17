@@ -15,7 +15,7 @@ public class Flow : BaseModel
 
     public string Condition { get; set; } = "";
 
-    public Step SourceStep { get; set; } = null!;
+    public virtual Step SourceStep { get; set; } = null!;
 
     [ForeignKey("DestinationStepId")]
     public virtual Step DestinationStep { get; set; } = null!;

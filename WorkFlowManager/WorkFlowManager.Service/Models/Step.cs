@@ -12,6 +12,11 @@ public class Step : BaseModel
     public string Name { get; set; } = "";
 
     public string Description { get; set; } = "";
+    public ProcessTypeEnum ProcessType { get; set; }
+    public string DllFilename { get; set; } = "";
+    public string WorkerClassName { get; set; } = "";
+    public string User { get; set; } = "";
+    public string Role { get; set; } = "";
 
     [Required]
     [ForeignKey(nameof(WorkFlow))]

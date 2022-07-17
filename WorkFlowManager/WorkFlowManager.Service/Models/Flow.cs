@@ -21,6 +21,6 @@ public class Flow : BaseModel
 
     public override string ToString()
     {
-        return $"{SourceStep.Name} -- {Condition} --> {DestinationStep.Name}";
+        return $"{SourceStep.Name} - {Condition} --> {DestinationStep.Name}";
     }
 }

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Samples.StartupApi", "Sampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkFlowManager.Service", "WorkFlowManager.Service\WorkFlowManager.Service.csproj", "{9CA5900B-326F-450F-931C-3B37FDF86558}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkFlowSample.ShoppingCard", "WorkFlowSample.ShoppingCard\WorkFlowSample.ShoppingCard.csproj", "{F2804A63-3998-48C1-A737-82E43F3A287A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9CA5900B-326F-450F-931C-3B37FDF86558}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CA5900B-326F-450F-931C-3B37FDF86558}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CA5900B-326F-450F-931C-3B37FDF86558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2804A63-3998-48C1-A737-82E43F3A287A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2804A63-3998-48C1-A737-82E43F3A287A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2804A63-3998-48C1-A737-82E43F3A287A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2804A63-3998-48C1-A737-82E43F3A287A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
