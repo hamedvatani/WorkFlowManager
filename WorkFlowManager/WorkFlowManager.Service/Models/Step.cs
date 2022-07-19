@@ -13,8 +13,6 @@ public class Step : BaseModel
 
     public string Description { get; set; } = "";
     public ProcessTypeEnum ProcessType { get; set; }
-    public string DllFilename { get; set; } = "";
-    public string WorkerClassName { get; set; } = "";
     public string User { get; set; } = "";
     public string Role { get; set; } = "";
 
@@ -22,7 +20,12 @@ public class Step : BaseModel
     [ForeignKey(nameof(WorkFlow))]
     public int WorkFlowId { get; set; }
 
+    [ForeignKey(nameof(AddOneWorker))]
+    public int? AddOneWorkerId { get; set; }
+
     public virtual WorkFlow WorkFlow { get; set; } = null!;
+
+    public virtual AddOneWorker? AddOneWorker { get; set; } = null!;
 
     [InverseProperty(nameof(Flow.SourceStep))]
     public virtual ICollection<Flow> Heads { get; set; } = null!;

@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using WorkFlowManager.Service.Core;
 using WorkFlowManager.Service.Models;
+using WorkFlowManager.Service.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +14,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<WorkFlowManagerContext>(op =>
     op.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-
-
+builder.Services.AddScoped<IWorkFlowRepository, TestRepository>();
+builder.Services.AddScoped<IWorkFlowManagerCore, WorkFlowManagerCore>();
 
 var app = builder.Build();
 

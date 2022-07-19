@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace WorkFlowSample.ShoppingCard
 {
     public partial class Form1 : Form
