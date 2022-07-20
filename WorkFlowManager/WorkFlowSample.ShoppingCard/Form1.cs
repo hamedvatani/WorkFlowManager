@@ -1,9 +1,11 @@
+using System.Text;
 using Newtonsoft.Json;
 
 namespace WorkFlowSample.ShoppingCard
 {
     public partial class Form1 : Form
     {
+
         public Form1()
         {
             InitializeComponent();
@@ -20,6 +22,18 @@ namespace WorkFlowSample.ShoppingCard
                     txtResult.AppendText("\r\n");
                 }
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
         }
     }
 }

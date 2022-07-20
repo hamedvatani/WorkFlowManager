@@ -1,4 +1,5 @@
 ﻿using WorkFlowManager.Service.Models;
+using WorkFlowManager.Service.Models.Dto;
 
 namespace WorkFlowManager.Service.Repositories;
 
@@ -40,5 +41,10 @@ public class TestRepository : IWorkFlowRepository
     public WorkFlow? GetWorkFlow(string workFlowName)
     {
         return workFlowName == "1" ? _wf : null;
+    }
+
+    public MethodResult AddEntityFlow(Entity entity, Step step)
+    {
+        return MethodResult.Success;
     }
 }
