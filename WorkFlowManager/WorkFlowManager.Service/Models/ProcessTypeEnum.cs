@@ -4,6 +4,9 @@ public enum ProcessTypeEnum
 {
     AddOnWorker,
     Service,
-    User,
+    StarterUser,
+    StarterRole,
+    CustomUser,
+    CustomRole,
     None
 }

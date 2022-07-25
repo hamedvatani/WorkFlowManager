@@ -5,6 +5,6 @@ namespace WorkFlowManager.Service.Repositories;
 
 public interface IWorkFlowRepository
 {
-    WorkFlow? GetWorkFlow(string workFlowName);
-    MethodResult AddEntityFlow(Entity entity, Step step);
+    // WorkFlow? GetWorkFlow(string workFlowName);
+    // MethodResult AddEntityFlow(Entity entity, Step step);
 }

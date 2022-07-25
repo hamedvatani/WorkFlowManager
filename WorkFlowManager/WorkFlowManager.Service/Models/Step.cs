@@ -13,8 +13,8 @@ public class Step : BaseModel
 
     public string Description { get; set; } = "";
     public ProcessTypeEnum ProcessType { get; set; }
-    public string User { get; set; } = "";
-    public string Role { get; set; } = "";
+    public string CustomUser { get; set; } = "";
+    public string CustomRole { get; set; } = "";
 
     [Required]
     [ForeignKey(nameof(WorkFlow))]
@@ -25,7 +25,7 @@ public class Step : BaseModel
 
     public virtual WorkFlow WorkFlow { get; set; } = null!;
 
-    public virtual AddOneWorker? AddOneWorker { get; set; } = null!;
+    public virtual AddOneWorker? AddOneWorker { get; set; }
 
     [InverseProperty(nameof(Flow.SourceStep))]
     public virtual ICollection<Flow> Heads { get; set; } = null!;

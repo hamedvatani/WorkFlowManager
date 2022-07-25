@@ -23,17 +23,17 @@ namespace WorkFlowManager.Service.Controllers
         [HttpPost("StartWorkFlow")]
         public ActionResult StartWorkFlow([FromBody] string jsonEntity, string workFlowName)
         {
-            var entity = jsonEntity.CreateEntity();
-            if (entity == null)
-                return Problem("Invalid jsonEntity");
-
-            var wf = _repository.GetWorkFlow(workFlowName);
-            if (wf == null)
-                return Problem("WorkFlow not found!");
-
-            var result = _core.StartWorkFlow(entity, wf);
-            if (!result.IsSuccess)
-                return Problem(result.Message);
+            // var entity = jsonEntity.CreateEntity();
+            // if (entity == null)
+            //     return Problem("Invalid jsonEntity");
+            //
+            // var wf = _repository.GetWorkFlow(workFlowName);
+            // if (wf == null)
+            //     return Problem("WorkFlow not found!");
+            //
+            // var result = _core.StartWorkFlow(entity, wf);
+            // if (!result.IsSuccess)
+            //     return Problem(result.Message);
 
             return Ok();
         }

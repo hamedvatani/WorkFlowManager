@@ -1,6 +1,7 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using WorkFlowManager.Service.Core;
+using WorkFlowManager.Service.Data;
 using WorkFlowManager.Service.Models;
 using WorkFlowManager.Service.Repositories;
 
