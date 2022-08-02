@@ -11,4 +11,7 @@ public class Entity : BaseModel, IEntity
     public int CurrentSequenceNumber { get; set; }
 
     public virtual ICollection<EntityFlow> EntityFlows { get; set; } = null!;
+
+    public string StarterUser { get; set; } = "";
+    public string StarterRole { get; set; } = "";
 }

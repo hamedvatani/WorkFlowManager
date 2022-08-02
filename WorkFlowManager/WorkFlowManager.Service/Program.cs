@@ -1,4 +1,3 @@
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using WorkFlowManager.Service.Core;
 using WorkFlowManager.Service.Data;
@@ -18,7 +17,6 @@ builder.Services.AddDbContext<WorkFlowManagerContext>(op =>
     op.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<IWorkFlowRepository, TestRepository>();
 builder.Services.AddScoped<IWorkFlowManagerCore, WorkFlowManagerCore>();
-builder.Services.AddMassTransit(x => x.UsingRabbitMq());
 
 var app = builder.Build();
 
