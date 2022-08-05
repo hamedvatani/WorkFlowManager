@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace RabbitMq.JobHandler.Test
+namespace JobHandler.Test
 {
     public class Tests
     {

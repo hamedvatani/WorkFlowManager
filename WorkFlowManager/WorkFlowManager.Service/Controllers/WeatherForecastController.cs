@@ -1,5 +1,4 @@
 using System.Globalization;
-using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using WorkFlowManager.Service.Models.Dto;
 
@@ -9,7 +8,6 @@ namespace WorkFlowManager.Service.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private readonly IPublishEndpoint _publishEndpoint;
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -17,10 +15,9 @@ namespace WorkFlowManager.Service.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IPublishEndpoint publishEndpoint)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
-            _publishEndpoint = publishEndpoint;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -33,15 +30,6 @@ namespace WorkFlowManager.Service.Controllers
                     Summary = Summaries[Random.Shared.Next(Summaries.Length)]
                 })
                 .ToArray();
-        }
-
-        [HttpGet("SendMessage")]
-        public async Task<IActionResult> SendMessage()
-        {
-            await _publishEndpoint.Publish<MethodResult>(
-                MethodResult.Error(DateTime.Now.ToString(CultureInfo.InvariantCulture)));
-
-            return Ok();
         }
     }
 }

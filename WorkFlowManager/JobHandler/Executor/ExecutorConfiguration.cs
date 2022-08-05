@@ -1,0 +1,8 @@
+﻿namespace JobHandler.Executor;
+
+public class ExecutorConfiguration
+{
+    public bool Durable { get; set; } = false;
+    public string GroupName { get; set; } = "";
+    public ushort MaxThreads { get; set; } = 1;
+}
