@@ -14,6 +14,7 @@ public class RabbitMqExecutor<T> : IExecutor<T>
     private IModel _channel = null!;
     private EventingBasicConsumer _consumer = null!;
     private string _consumerTag = "";
+    private string _failJobsQueue => _configuration.GroupName + "_FailJobs";
 
     public RabbitMqExecutor(RabbitMqExecutorConfiguration configuration)
     {
@@ -39,7 +40,7 @@ public class RabbitMqExecutor<T> : IExecutor<T>
         _connection = _factory.CreateConnection();
         _channel = _connection.CreateModel();
         _channel.QueueDeclare(_configuration.GroupName, _configuration.Durable, false, false);
-        _channel.QueueDeclare(_configuration.GroupName+"_FailJobs", true, false, false);
+        _channel.QueueDeclare(_failJobsQueue, true, false, false);
         _channel.BasicQos(0, _configuration.MaxThreads, false);
         _consumer = new EventingBasicConsumer(_channel);
     }
@@ -48,11 +49,30 @@ public class RabbitMqExecutor<T> : IExecutor<T>
     {
         _consumer.Received += (sender, ea) =>
         {
-            var bytes = ea.Body.ToArray();
-            var str = Encoding.UTF8.GetString(bytes);
-            var job = JsonConvert.DeserializeObject<T>(str);
-            if (job != null && executor(job))
-                _channel.BasicAck(ea.DeliveryTag, false);
+            Task.Run(() =>
+            {
+                var bytes = ea.Body.ToArray();
+                var str = Encoding.UTF8.GetString(bytes);
+                T? job = default(T);
+                try
+                {
+                    job = JsonConvert.DeserializeObject<T>(str);
+                    if (job != null && executor(job))
+                        _channel.BasicAck(ea.DeliveryTag, false);
+                    else
+                    {
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var props = _channel.CreateBasicProperties();
+                    props.Persistent = true;
+                    props.Headers = new Dictionary<string, object>();
+                    props.Headers.Add("Error", ex.Message);
+                    _channel.BasicPublish("", _failJobsQueue, props, ea.Body);
+                    _channel.BasicAck(ea.DeliveryTag, false);
+                }
+            });
         };
         _consumerTag = _channel.BasicConsume(_configuration.GroupName, false, _consumer);
     }
