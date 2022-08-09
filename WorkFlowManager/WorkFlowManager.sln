@@ -13,19 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkFlowManager.Service", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkFlowSample.ShoppingCard", "WorkFlowSample.ShoppingCard\WorkFlowSample.ShoppingCard.csproj", "{F2804A63-3998-48C1-A737-82E43F3A287A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Publisher", "Test.Publisher\Test.Publisher.csproj", "{CCA2387F-290A-4BF7-BD67-6F06BEA7DEC7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Consumer1", "Test.Consumer1\Test.Consumer1.csproj", "{284C6808-115E-41C0-946E-398DEBA2AA48}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Consumer2", "Test.Consumer2\Test.Consumer2.csproj", "{1A36BA02-54D3-4295-8F7C-C753304029DB}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JobHandler", "JobHandler", "{BBB76384-26FD-48D4-8C7A-1BA9F9E6ACCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobHandler.RabbitMq", "JobHandler.RabbitMq\JobHandler.RabbitMq.csproj", "{CCF375F8-60F4-4311-916C-4424B9132556}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobHandler.RabbitMq", "JobHandler.RabbitMq\JobHandler.RabbitMq.csproj", "{CCF375F8-60F4-4311-916C-4424B9132556}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobHandler", "JobHandler\JobHandler.csproj", "{7547904A-19FC-4B9C-BE86-6A0E762017D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobHandler", "JobHandler\JobHandler.csproj", "{7547904A-19FC-4B9C-BE86-6A0E762017D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobHandler.Test", "JobHandler.Test\JobHandler.Test.csproj", "{B8DBD41C-786F-4483-8786-04A63D6FB7B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobHandler.Test", "JobHandler.Test\JobHandler.Test.csproj", "{B8DBD41C-786F-4483-8786-04A63D6FB7B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,18 +47,6 @@ Global
 		{F2804A63-3998-48C1-A737-82E43F3A287A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2804A63-3998-48C1-A737-82E43F3A287A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2804A63-3998-48C1-A737-82E43F3A287A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CCA2387F-290A-4BF7-BD67-6F06BEA7DEC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CCA2387F-290A-4BF7-BD67-6F06BEA7DEC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CCA2387F-290A-4BF7-BD67-6F06BEA7DEC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CCA2387F-290A-4BF7-BD67-6F06BEA7DEC7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{284C6808-115E-41C0-946E-398DEBA2AA48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{284C6808-115E-41C0-946E-398DEBA2AA48}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{284C6808-115E-41C0-946E-398DEBA2AA48}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{284C6808-115E-41C0-946E-398DEBA2AA48}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A36BA02-54D3-4295-8F7C-C753304029DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A36BA02-54D3-4295-8F7C-C753304029DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A36BA02-54D3-4295-8F7C-C753304029DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A36BA02-54D3-4295-8F7C-C753304029DB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CCF375F8-60F4-4311-916C-4424B9132556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CCF375F8-60F4-4311-916C-4424B9132556}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCF375F8-60F4-4311-916C-4424B9132556}.Release|Any CPU.ActiveCfg = Release|Any CPU

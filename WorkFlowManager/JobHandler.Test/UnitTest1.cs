@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using JobHandler.Executor;
@@ -25,8 +26,8 @@ namespace JobHandler.Test
             helper.Send(new Job { Subject = "Job 1" });
             Thread.Sleep(1000);
             helper.Stop();
-            Assert.AreEqual(helper.ReceivedJobs.Count, 1);
-            Assert.AreEqual(helper.ReceivedJobs.ToList()[0].Subject, "Job 1");
+            Assert.AreEqual(1, helper.ReceivedJobs.Count);
+            Assert.AreEqual("Job 1", helper.ReceivedJobs.ToList()[0].Subject);
             Assert.LessOrEqual(helper.ReceivedJobs.ToList()[0].Lag, 100);
         }
 
@@ -36,11 +37,11 @@ namespace JobHandler.Test
             var helper = new JobHelper("group1");
             helper.Start();
             helper.Send(new Job { Subject = "Job 1" });
-            Thread.Sleep(1000);
+            Thread.Sleep(3000);
             helper.Stop();
             helper.Send(new Job { Subject = "Job 2" });
-            Assert.AreEqual(helper.ReceivedJobs.Count, 1);
-            Assert.AreEqual(helper.ReceivedJobs.ToList()[0].Subject, "Job 1");
+            Assert.AreEqual(1, helper.ReceivedJobs.Count);
+            Assert.AreEqual("Job 1", helper.ReceivedJobs.ToList()[0].Subject);
             Assert.LessOrEqual(helper.ReceivedJobs.ToList()[0].Lag, 100);
         }
 
@@ -48,32 +49,39 @@ namespace JobHandler.Test
         public void Test3_MaxThreadsTest1()
         {
             var helper = new JobHelper("group1", 5);
-            helper.Start();
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            helper.Start(5000);
             helper.Send(new Job { Subject = "Job 1" });
             helper.Send(new Job { Subject = "Job 2" });
             helper.Send(new Job { Subject = "Job 3" });
             helper.Send(new Job { Subject = "Job 4" });
             helper.Send(new Job { Subject = "Job 5" });
-            Thread.Sleep(1500);
+            while (helper.ReceivedJobs.Count<5)
+                Thread.Sleep(100);
+            sw.Stop();
             helper.Stop();
-            Assert.AreEqual(helper.ReceivedJobs.Count, 5);
+            Assert.Less(sw.ElapsedMilliseconds, 10000);
         }
 
         [Test]
         public void Test3_MaxThreadsTest2()
         {
             var helper = new JobHelper("group1", 5);
-            helper.Start();
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            helper.Start(5000);
             helper.Send(new Job { Subject = "Job 1" });
             helper.Send(new Job { Subject = "Job 2" });
             helper.Send(new Job { Subject = "Job 3" });
             helper.Send(new Job { Subject = "Job 4" });
             helper.Send(new Job { Subject = "Job 5" });
             helper.Send(new Job { Subject = "Job 6" });
-            helper.Send(new Job { Subject = "Job 7" });
-            Thread.Sleep(1500);
+            while (helper.ReceivedJobs.Count < 6)
+                Thread.Sleep(100);
+            sw.Stop();
             helper.Stop();
-            Assert.AreEqual(helper.ReceivedJobs.Count, 5);
+            Assert.GreaterOrEqual(sw.ElapsedMilliseconds, 10000);
         }
 
         [Test]
@@ -84,7 +92,7 @@ namespace JobHandler.Test
             helper.Send("Job 1");
             Thread.Sleep(1500);
             helper.Stop();
-            Assert.AreEqual(helper.ReceivedJobs.Count, 0);
+            Assert.AreEqual(0,helper.ReceivedJobs.Count);
 
             var factory = new ConnectionFactory
             {
@@ -96,6 +104,28 @@ namespace JobHandler.Test
             using var channel = connection.CreateModel();
             var res = channel.BasicGet("group1_FailJobs", false);
             Assert.IsNotNull(res);
+        }
+
+        [Test]
+        public void Test5_Timeout()
+        {
+            var helper = new JobHelper("group1", timeout: 1000, maxRetries: 1);
+            helper.Start(3000);
+            helper.Send(new Job { Subject = "Job 1" });
+            Thread.Sleep(5000);
+            helper.Stop();
+            Assert.AreEqual(0, helper.ReceivedJobs.Count);
+        }
+
+        [Test]
+        public void Test6_Retries()
+        {
+            var helper = new JobHelper("group1", timeout: 1000);
+            helper.Start(10, false);
+            helper.Send(new Job { Subject = "Job 1" });
+            Thread.Sleep(20000);
+            helper.Stop();
+            Assert.AreEqual(3, helper.ReceivedJobs.Count);
         }
     }
 }

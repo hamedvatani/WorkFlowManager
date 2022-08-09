@@ -2,6 +2,6 @@
 
 public interface IExecutor<T>
 {
-    void StartExecution(Func<T, bool> executor);
+    void StartExecution(Func<T, CancellationToken, bool> executor);
     void StopExecution();
 }

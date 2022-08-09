@@ -44,6 +44,10 @@ public class RabbitMqSender : ISender
         var bytes = Encoding.UTF8.GetBytes(str);
         var props = _channel.CreateBasicProperties();
         props.Persistent = _configuration.Durable;
+        props.Headers = new Dictionary<string, object>();
+        props.Headers.Add("Timeout", _configuration.Timeout);
+        props.Headers.Add("Retries", 0);
+        props.Headers.Add("MaxRetries", _configuration.MaxRetries);
         _channel.BasicPublish("", _configuration.GroupName, props, bytes);
     }
 
