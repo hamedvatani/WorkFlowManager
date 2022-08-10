@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\WorkFlowManager.Core\WorkFlowManager.Core.csproj" />
-  </ItemGroup>
-
 </Project>

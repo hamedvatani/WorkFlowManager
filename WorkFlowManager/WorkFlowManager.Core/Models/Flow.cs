@@ -17,11 +17,10 @@ public class Flow : BaseModel
 
     public virtual Step SourceStep { get; set; } = null!;
 
-    [ForeignKey("DestinationStepId")]
     public virtual Step DestinationStep { get; set; } = null!;
 
     public override string ToString()
     {
-        return $"{SourceStep.Name} -- {Condition} --> {DestinationStep.Name}";
+        return $"{SourceStep.Name} - {Condition} --> {DestinationStep.Name}";
     }
 }

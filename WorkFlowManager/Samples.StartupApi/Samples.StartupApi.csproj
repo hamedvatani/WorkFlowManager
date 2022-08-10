@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Samples.ShoppigCard\Samples.ShoppigCard.csproj" />
-    <ProjectReference Include="..\WorkFlowManager.Core\WorkFlowManager.Core.csproj" />
   </ItemGroup>
 
 </Project>
