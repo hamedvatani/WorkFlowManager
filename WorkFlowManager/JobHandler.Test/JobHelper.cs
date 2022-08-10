@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using System.Threading.Tasks;
 using JobHandler.Executor;
 using JobHandler.RabbitMq.Executor;
 using JobHandler.RabbitMq.Sender;
@@ -57,7 +56,7 @@ public class JobHelper
         _sender.Send(job);
     }
 
-    public void Start(int jobDelay = 500, bool returnValue=true)
+    public void Start(int jobDelay = 500, bool returnValue = true)
     {
         _executor.StartExecution((job, token) =>
         {
