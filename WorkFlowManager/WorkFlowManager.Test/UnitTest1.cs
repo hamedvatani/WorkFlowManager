@@ -1,22 +1,27 @@
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using WorkFlowManager.Core.Contract;
 using WorkFlowManager.Test.ShoppingCard;
 
 namespace WorkFlowManager.Test
 {
     public class Tests
     {
-        private WorkFlowHelper _helper;
+        private WorkFlowHelper? _helper;
 
         [SetUp]
         public void Setup()
         {
-            _helper = new WorkFlowHelper();
+            var services = new ServiceCollection();
+            services.AddTransient<IManager, Manager>();
+            services.AddTransient<WorkFlowHelper>();
+            var serviceProvider = services.BuildServiceProvider();
+            _helper = serviceProvider.GetService<WorkFlowHelper>();
         }
 
         [Test]
         public void Test1()
         {
-            Assert.AreEqual("Hello",_helper.SayHello());
         }
     }
 }

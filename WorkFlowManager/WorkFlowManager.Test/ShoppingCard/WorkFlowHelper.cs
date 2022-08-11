@@ -4,12 +4,10 @@ namespace WorkFlowManager.Test.ShoppingCard;
 
 public class WorkFlowHelper
 {
-    public WorkFlowHelper()
-    {
-    }
+    private IManager _manager;
 
-    public string SayHello()
+    public WorkFlowHelper(IManager manager)
     {
-        return "Hello";
+        _manager = manager;
     }
 }
