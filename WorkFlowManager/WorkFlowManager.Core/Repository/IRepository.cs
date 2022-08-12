@@ -1,8 +1,8 @@
 ﻿using WorkFlowManager.Core.Models;
 
-namespace WorkFlowManager.Core.Contract;
+namespace WorkFlowManager.Core.Repository;
 
-public interface IManager
+public interface IRepository
 {
     WorkFlow? GetWorkFlow(string name);
     WorkFlow AddWorkFlow(string name, string entityName);

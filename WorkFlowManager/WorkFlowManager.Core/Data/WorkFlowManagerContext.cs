@@ -12,6 +12,10 @@ public class WorkFlowManagerContext : DbContext
     public DbSet<Entity> Entities { get; set; } = null!;
     public DbSet<EntityFlow> EntityFlows { get; set; } = null!;
 
+    public WorkFlowManagerContext()
+    {
+    }
+
     public WorkFlowManagerContext(DbContextOptions options) : base(options)
     {
     }
