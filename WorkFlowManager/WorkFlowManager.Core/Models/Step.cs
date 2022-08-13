@@ -21,7 +21,7 @@ public class Step : BaseModel
     public int WorkFlowId { get; set; }
 
     [ForeignKey(nameof(AddOnWorker))]
-    public int? AddOneWorkerId { get; set; }
+    public int? AddOnWorkerId { get; set; }
 
     public virtual WorkFlow WorkFlow { get; set; } = null!;
 

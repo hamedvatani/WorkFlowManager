@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using JobHandler.Executor;
 using JobHandler.RabbitMq.Executor;
@@ -12,6 +13,8 @@ namespace JobHandler.Test;
 public class JobHelper
 {
     public ConcurrentBag<Job> ReceivedJobs { get; set; } = new();
+    public Job FailJob { get; set; } = null!;
+    public List<FuncResult> FailJobErrorList { get; set; } = null!;
 
     private readonly ISender _sender;
     private readonly IExecutor<Job> _executor;
@@ -56,17 +59,25 @@ public class JobHelper
         _sender.Send(job);
     }
 
-    public void Start(int jobDelay = 500, bool returnValue = true)
+    public void Start(int jobDelay = 500, bool returnValue = true, bool useFailAction = false)
     {
-        _executor.StartExecution((job, token) =>
-        {
-            job.ConsumeTime = DateTime.Now;
-            Thread.Sleep(jobDelay);
-            job.ExecuteTime = DateTime.Now;
-            if (!token.IsCancellationRequested)
-                ReceivedJobs.Add(job);
-            return returnValue;
-        });
+        _executor.StartExecution(
+            (job, token) =>
+            {
+                job.ConsumeTime = DateTime.Now;
+                Thread.Sleep(jobDelay);
+                job.ExecuteTime = DateTime.Now;
+                if (!token.IsCancellationRequested)
+                    ReceivedJobs.Add(job);
+                return new FuncResult {IsSuccess = returnValue};
+            }
+            , useFailAction
+                ? (job, errorList) =>
+                {
+                    FailJob = job;
+                    FailJobErrorList = errorList;
+                }
+                : null);
     }
 
     public void Stop()

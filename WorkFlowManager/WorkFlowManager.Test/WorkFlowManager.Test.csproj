@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ShoppingCard\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\WorkFlowManager.Core\WorkFlowManager.Core.csproj" />
   </ItemGroup>
 

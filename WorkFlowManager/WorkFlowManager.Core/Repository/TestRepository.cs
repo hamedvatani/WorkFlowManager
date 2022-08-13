@@ -5,6 +5,10 @@ namespace WorkFlowManager.Core.Repository;
 
 public class TestRepository : IRepository
 {
+    private int _lastWorkFlowId;
+    private int _lastStepId;
+    private int _lastFlowId;
+
     public WorkFlow? GetWorkFlow(string name)
     {
         return null;
@@ -12,13 +16,55 @@ public class TestRepository : IRepository
 
     public WorkFlow AddWorkFlow(string name, string entityName)
     {
-        var wf = new WorkFlow
+        _lastWorkFlowId++;
+        var workFlow = new WorkFlow
         {
-            Id = 1,
+            Id = _lastWorkFlowId,
             Name = name,
             EntityName = entityName,
             Steps = new List<Step>()
         };
-        return wf;
+        return workFlow;
+    }
+
+    public Step AddStep(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType,
+        string description, string customUser, string customRole, AddOnWorker? addOnWorker)
+    {
+        _lastStepId++;
+        var step = new Step
+        {
+            Id = _lastStepId,
+            StepType = stepType,
+            Name = name,
+            Description = description,
+            ProcessType = processType,
+            CustomUser = customUser,
+            CustomRole = customRole,
+            WorkFlowId = workFlow.Id,
+            WorkFlow = workFlow,
+            AddOnWorkerId = addOnWorker?.Id,
+            AddOnWorker = addOnWorker,
+            Heads = new List<Flow>(),
+            Tails = new List<Flow>()
+        };
+        workFlow.Steps.Add(step);
+        return step;
+    }
+
+    public Flow AddFlow(Step sourceStep, Step destinationStep, string condition)
+    {
+        _lastFlowId++;
+        var flow = new Flow
+        {
+            Id = _lastFlowId,
+            Condition = condition,
+            SourceStepId = sourceStep.Id,
+            SourceStep = sourceStep,
+            DestinationStepId = destinationStep.Id,
+            DestinationStep = destinationStep
+        };
+        sourceStep.Heads.Add(flow);
+        destinationStep.Tails.Add(flow);
+        return flow;
     }
 }

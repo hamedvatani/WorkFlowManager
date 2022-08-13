@@ -117,10 +117,22 @@ namespace JobHandler.Test
         {
             var helper = new JobHelper("group1", timeout: 1000);
             helper.Start(10, false);
-            helper.Send(new Job {Subject = "Job 1"});
+            helper.Send(new Job { Subject = "Job 1" });
             Thread.Sleep(20000);
             helper.Stop();
             Assert.AreEqual(3, helper.ReceivedJobs.Count);
+        }
+
+        [Test]
+        public void Test7_FailAction()
+        {
+            var helper = new JobHelper("group1", timeout: 1000);
+            helper.Start(10, false, true);
+            helper.Send(new Job { Subject = "Job 1" });
+            Thread.Sleep(20000);
+            helper.Stop();
+            Assert.NotNull(helper.FailJob);
+            Assert.AreEqual(3, helper.FailJobErrorList.Count);
         }
     }
 }

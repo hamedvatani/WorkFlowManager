@@ -49,17 +49,18 @@ public class RabbitMqExecutor<T> : IExecutor<T>
         _consumer = new EventingBasicConsumer(_channel);
     }
 
-    public void StartExecution(Func<T, CancellationToken, bool> executor)
+    public void StartExecution(Func<T, CancellationToken, FuncResult> executor, Action<T, List<FuncResult>>? failAction)
     {
         _consumer.Received += async (_, ea) =>
         {
             var bytes = ea.Body.ToArray();
             var str = Encoding.UTF8.GetString(bytes);
+            T? job = default(T);
             try
             {
-                var job = JsonConvert.DeserializeObject<T>(str);
+                job = JsonConvert.DeserializeObject<T>(str);
                 if (job == null)
-                    FailJob(ea, "Cant parse job");
+                    FailJob(ea, FuncResult.Fail("Cant parse job"), failAction, job);
                 else
                 {
                     var timeout = (int) ea.BasicProperties.Headers["Timeout"];
@@ -72,26 +73,26 @@ public class RabbitMqExecutor<T> : IExecutor<T>
                     ea.BasicProperties.Headers["Retries"] = retries;
                     if (task == t)
                     {
-                        if (!task.Result)
+                        if (!task.Result.IsSuccess)
                         {
                             if (retries >= maxRetries)
-                                FailJob(ea, "Job fails!");
+                                FailJob(ea, task.Result, failAction, job);
                             else
-                                RetryJob(ea, "Job fails!");
+                                RetryJob(ea, task.Result);
                         }
                     }
                     else
                     {
                         if (retries >= maxRetries)
-                            FailJob(ea, "Job timeout!");
+                            FailJob(ea, FuncResult.Timeout(), failAction, job);
                         else
-                            RetryJob(ea, "Job timeout!");
+                            RetryJob(ea, FuncResult.Timeout());
                     }
                 }
             }
             catch (Exception ex)
             {
-                FailJob(ea, ex.Message);
+                FailJob(ea, FuncResult.Fail(ex.Message), failAction, job);
             }
             finally
             {
@@ -107,23 +108,50 @@ public class RabbitMqExecutor<T> : IExecutor<T>
             _channel.BasicCancel(_consumerTag);
     }
 
-    private void FailJob(BasicDeliverEventArgs ea, string message)
-    {
-        var props = ea.BasicProperties;
-        props.Persistent = true;
-        props.Headers ??= new Dictionary<string, object>();
-        props.Headers.Add("Error", message);
-        _channel.BasicPublish("", FailJobsQueue, props, ea.Body);
-    }
-
-    private void RetryJob(BasicDeliverEventArgs ea, string message)
+    private void RetryJob(BasicDeliverEventArgs ea, FuncResult result)
     {
         var props = ea.BasicProperties;
         if (props.Headers.ContainsKey("x-delay"))
             props.Headers["x-delay"] = _configuration.RetryDelay;
         else
             props.Headers.Add("x-delay", _configuration.RetryDelay);
-        props.Headers.Add("Error " + props.Headers["Retries"], message);
+        List<FuncResult> list = new();
+        if (!props.Headers.ContainsKey("Results"))
+            props.Headers.Add("Results", null);
+        else
+            list = DeserializeFuncResultList((byte[]) props.Headers["Results"]);
+        list.Add(result);
+        props.Headers["Results"] = SerializeFuncResultList(list);
         _channel.BasicPublish(RetryJobsExchange, "", props, ea.Body);
+    }
+
+    private void FailJob(BasicDeliverEventArgs ea, FuncResult result, Action<T, List<FuncResult>>? failAction, T? job)
+    {
+        var props = ea.BasicProperties;
+        props.Persistent = true;
+        props.Headers ??= new Dictionary<string, object>();
+        List<FuncResult> list = new();
+        if (!props.Headers.ContainsKey("Results"))
+            props.Headers.Add("Results", null);
+        else
+            list = DeserializeFuncResultList((byte[]) props.Headers["Results"]);
+        list.Add(result);
+        props.Headers["Results"] = SerializeFuncResultList(list);
+        if (failAction == null || job == null)
+            _channel.BasicPublish("", FailJobsQueue, props, ea.Body);
+        else
+            failAction(job, list);
+    }
+
+    private byte[] SerializeFuncResultList(List<FuncResult> results)
+    {
+        var str = JsonConvert.SerializeObject(results);
+        return Encoding.UTF8.GetBytes(str);
+    }
+
+    private List<FuncResult> DeserializeFuncResultList(byte[] data)
+    {
+        var str = Encoding.UTF8.GetString(data);
+        return JsonConvert.DeserializeObject<List<FuncResult>>(str) ?? new();
     }
 }
