@@ -67,6 +67,8 @@ namespace WorkFlowManager.Test
                 }
             };
 
+            _helper.Start();
+
 
 
             Assert.Pass();

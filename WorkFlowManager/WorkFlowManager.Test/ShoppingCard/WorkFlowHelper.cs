@@ -47,4 +47,9 @@ public class WorkFlowHelper
         _manager.AddFlow(getAcceptanceStep, doShoppingStep, "Accept");
         _manager.AddFlow(getAcceptanceStep, errorReportStep, "Reject");
     }
+
+    public void Start()
+    {
+        _manager.StartWorkFlow(Card, _workFlow);
+    }
 }

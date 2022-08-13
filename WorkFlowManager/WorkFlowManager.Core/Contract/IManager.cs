@@ -10,4 +10,6 @@ public interface IManager
         string customUser, string customRole, AddOnWorker? addOnWorker);
 
     Flow AddFlow(Step sourceStep, Step destinationStep, string condition);
+    MethodResult ValidateWorkFlow(WorkFlow workFlow);
+    MethodResult StartWorkFlow(IEntity entity, WorkFlow workFlow);
 }

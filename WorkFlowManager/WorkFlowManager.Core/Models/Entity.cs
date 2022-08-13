@@ -12,7 +12,7 @@ public class Entity : BaseModel, IEntity
 
     public int CurrentSequenceNumber { get; set; }
 
-    public virtual ICollection<EntityFlow> EntityFlows { get; set; } = null!;
+    public virtual ICollection<EntityLog> EntityLogs { get; set; } = null!;
 
     [Required]
     public string Name { get; set; } = "";
