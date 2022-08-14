@@ -15,13 +15,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WorkFlowManager", "WorkFlow
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkFlowManager.Core", "WorkFlowManager.Core\WorkFlowManager.Core.csproj", "{8DCF4FD3-1C42-4BC0-9944-71076303B82C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkFlowManager.Client", "WorkFlowManager.Client\WorkFlowManager.Client.csproj", "{7B2C772D-E5B6-482A-9E70-8B1C941569F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkFlowManager.Client", "WorkFlowManager.Client\WorkFlowManager.Client.csproj", "{7B2C772D-E5B6-482A-9E70-8B1C941569F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{1D320398-A209-488B-AE79-3CE91FC4B39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCard", "ShoppingCard\ShoppingCard.csproj", "{6BCFF666-510F-46B8-A629-6F75418C7DDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCard", "ShoppingCard\ShoppingCard.csproj", "{6BCFF666-510F-46B8-A629-6F75418C7DDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingCard.Test", "ShoppingCard.Test\ShoppingCard.Test.csproj", "{19C6575E-CA91-4A33-8B4B-31ADFF548E83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingCard.Test", "ShoppingCard.Test\ShoppingCard.Test.csproj", "{19C6575E-CA91-4A33-8B4B-31ADFF548E83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
