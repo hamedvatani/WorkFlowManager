@@ -1,4 +1,6 @@
-﻿using WorkFlowManager.Core.Models;
+﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using WorkFlowManager.Core.Models;
 using WorkFlowManager.Core.Repository;
 
 namespace WorkFlowManager.Core.Contract;
@@ -6,10 +8,36 @@ namespace WorkFlowManager.Core.Contract;
 public class Manager : IManager
 {
     private readonly IRepository _repository;
+    private readonly ManagerConfiguration _configuration;
 
-    public Manager(IRepository repository)
+    private ConnectionFactory _factory = null!;
+    private IConnection _connection = null!;
+    private IModel _channel = null!;
+    private EventingBasicConsumer _consumer = null!;
+
+    public Manager(IRepository repository, ManagerConfiguration configuration)
     {
         _repository = repository;
+        _configuration = configuration;
+
+        _factory = new ConnectionFactory
+        {
+            HostName = _configuration.RabbitMqHostName,
+            UserName = _configuration.RabbitMqUserName,
+            Password = _configuration.RabbitMqPassword
+        };
+        _connection = _factory.CreateConnection();
+        _channel = _connection.CreateModel();
+        _channel.QueueDeclare(_configuration.InputQueueName, true, false, false);
+        _channel.BasicQos(0, 1, false);
+        _consumer = new EventingBasicConsumer(_channel);
+        _consumer.Received += onReceiveMessage;
+        _channel.BasicConsume(_configuration.InputQueueName, false, _consumer);
+    }
+
+    public AddOnWorker AddWorker(string fileName, string className)
+    {
+        return _repository.AddWorker(fileName, className);
     }
 
     public WorkFlow? GetWorkFlow(string name)
@@ -77,20 +105,9 @@ public class Manager : IManager
         return MethodResult.Ok();
     }
 
-    public MethodResult StartWorkFlow(IEntity entity, WorkFlow workFlow)
+    private void onReceiveMessage(object? sender, BasicDeliverEventArgs e)
     {
-        if (workFlow.EntityName != entity.Name)
-            return MethodResult.Error("entity name not match!");
-        var res = ValidateWorkFlow(workFlow);
-        if (!res.IsSuccess)
-            return res;
 
-        var startStep = workFlow.Steps.FirstOrDefault(s => s.StepType == StepTypeEnum.Start);
-        if (startStep == null)
-            return MethodResult.Error("");
-
-        RunStep(startStep);
-        return MethodResult.Ok();
     }
 
     private void RunStep(Step step)

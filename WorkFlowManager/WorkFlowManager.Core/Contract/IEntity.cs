@@ -1,4 +1,6 @@
-﻿namespace WorkFlowManager.Core.Contract;
+﻿using Newtonsoft.Json;
+
+namespace WorkFlowManager.Core.Contract;
 
 public interface IEntity
 {

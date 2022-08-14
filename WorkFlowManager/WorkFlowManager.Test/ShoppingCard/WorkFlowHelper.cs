@@ -24,11 +24,15 @@ public class WorkFlowHelper
             return;
         }
 
+        var worker = _manager.AddWorker(
+            @"C:\Projects\WorkFlowManager\WorkFlowManager\WorkFlowManager.Test\bin\Debug\net6.0\WorkFlowManager.Test.dll",
+            "WorkFlowManager.Test.ShoppingCard.IsExists");
+
         _workFlow = _manager.AddWorkFlow("MyWorkFlow", "ShoppingCard");
         var startStep = _manager.AddStep(_workFlow, "Start", StepTypeEnum.Start, ProcessTypeEnum.None, "Start Step", "",
             "", null);
         var isExistsStep = _manager.AddStep(_workFlow, "IsExists", StepTypeEnum.Condition, ProcessTypeEnum.AddOnWorker,
-            "Check For Items Existence", "", "", null);
+            "Check For Items Existence", "", "", worker);
         var doShoppingStep = _manager.AddStep(_workFlow, "DoShopping", StepTypeEnum.Process, ProcessTypeEnum.Service,
             "Do Shopping Process", "", "", null);
         var errorReportStep = _manager.AddStep(_workFlow, "ErrorReport", StepTypeEnum.Process, ProcessTypeEnum.Service,
@@ -46,10 +50,5 @@ public class WorkFlowHelper
         _manager.AddFlow(errorReportStep, endStep, "");
         _manager.AddFlow(getAcceptanceStep, doShoppingStep, "Accept");
         _manager.AddFlow(getAcceptanceStep, errorReportStep, "Reject");
-    }
-
-    public void Start()
-    {
-        _manager.StartWorkFlow(Card, _workFlow);
     }
 }

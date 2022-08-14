@@ -5,9 +5,22 @@ namespace WorkFlowManager.Core.Repository;
 
 public class TestRepository : IRepository
 {
+    private int _lastWorkerId;
     private int _lastWorkFlowId;
     private int _lastStepId;
     private int _lastFlowId;
+
+    public AddOnWorker AddWorker(string fileName, string className)
+    {
+        _lastWorkerId++;
+        var worker = new AddOnWorker
+        {
+            Id = _lastWorkerId,
+            FileName = fileName,
+            ClassName = className
+        };
+        return worker;
+    }
 
     public WorkFlow? GetWorkFlow(string name)
     {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using WorkFlowManager.Core.Contract;
@@ -19,6 +20,7 @@ namespace WorkFlowManager.Test
             services.AddTransient<IManager, Manager>();
             services.AddTransient<WorkFlowHelper>();
             services.AddTransient<IRepository, TestRepository>();
+            services.AddTransient<ManagerConfiguration>();
             var serviceProvider = services.BuildServiceProvider();
             _helper = serviceProvider.GetService<WorkFlowHelper>();
         }
@@ -66,10 +68,6 @@ namespace WorkFlowManager.Test
                     },
                 }
             };
-
-            _helper.Start();
-
-
 
             Assert.Pass();
         }
