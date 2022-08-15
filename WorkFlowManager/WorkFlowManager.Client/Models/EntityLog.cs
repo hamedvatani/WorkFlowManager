@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using WorkFlowManager.Core.Contract;
 
-namespace WorkFlowManager.Core.Models;
+namespace WorkFlowManager.Client.Models;
 
 public class EntityLog : BaseModel
 {

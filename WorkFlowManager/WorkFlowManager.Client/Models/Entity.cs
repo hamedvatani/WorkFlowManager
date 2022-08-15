@@ -1,10 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
-using WorkFlowManager.Core.Contract;
 
-namespace WorkFlowManager.Core.Models;
+namespace WorkFlowManager.Client.Models;
 
-[Index(nameof(Name), IsUnique = true)]
 public class Entity : BaseModel, IEntity
 {
     [Required]

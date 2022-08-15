@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkFlowManager.Core.Models;
+namespace WorkFlowManager.Service.Models;
 
 public class WorkFlow : BaseModel
 {

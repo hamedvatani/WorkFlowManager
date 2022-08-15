@@ -1,8 +1,8 @@
-﻿using WorkFlowManager.Core.Models;
+﻿using WorkFlowManager.Service.Models;
 
-namespace WorkFlowManager.Core.Contract;
+namespace WorkFlowManager.Service.Repository;
 
-public interface IManager
+public interface IRepository
 {
     AddOnWorker AddWorker(string fileName, string className);
     WorkFlow? GetWorkFlow(string name);
@@ -11,5 +11,4 @@ public interface IManager
         string customUser, string customRole, AddOnWorker? addOnWorker);
 
     Flow AddFlow(Step sourceStep, Step destinationStep, string condition);
-    MethodResult ValidateWorkFlow(WorkFlow workFlow);
 }

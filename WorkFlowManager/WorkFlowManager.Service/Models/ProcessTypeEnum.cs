@@ -1,4 +1,4 @@
-﻿namespace WorkFlowManager.Core.Models;
+﻿namespace WorkFlowManager.Service.Models;
 
 public enum ProcessTypeEnum
 {

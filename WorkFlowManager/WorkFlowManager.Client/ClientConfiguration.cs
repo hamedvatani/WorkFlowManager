@@ -1,9 +1,10 @@
-﻿namespace WorkFlowManager.Core.Contract;
+﻿namespace WorkFlowManager.Client;
 
-public class ManagerConfiguration
+public class ClientConfiguration
 {
     public string RabbitMqHostName { get; set; } = "127.0.0.1";
+    public int RabbitMqPort { get; set; } = 15672;
     public string RabbitMqUserName { get; set; } = "guest";
     public string RabbitMqPassword { get; set; } = "guest";
-    public string InputQueueName { get; set; } = "WorkFlowManager.Input";
+    public string QueueName { get; set; } = "WorkFlowManager";
 }

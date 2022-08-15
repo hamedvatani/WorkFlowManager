@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkFlowManager.Client.Models;
+using WorkFlowManager.Service.Models;
 
-namespace WorkFlowManager.Core.Data;
+namespace WorkFlowManager.Service.Data;
 
 public class WorkFlowManagerContext : DbContext
 {
