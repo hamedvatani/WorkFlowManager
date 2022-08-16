@@ -1,42 +1,27 @@
-﻿using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using WorkFlowManager.Client.Models;
+﻿using Microsoft.Extensions.Hosting;
 
 namespace WorkFlowManager.Client;
 
-public class Client
+public class Client : IHostedService
 {
-    private ClientConfiguration _configuration;
-    private ConnectionFactory _factory = null!;
-    private IConnection _connection = null!;
-    private IModel _channel = null!;
-    private EventingBasicConsumer _consumer = null!;
+    private readonly ClientConfiguration _configuration;
+    private readonly RpcClient _rpcClient;
 
-    public Client(ClientConfiguration configuration)
+    public Client(ClientConfiguration configuration, RpcClient rpcClient)
     {
-        this._configuration = configuration;
-
-        _factory = new ConnectionFactory
-        {
-            HostName = _configuration.RabbitMqHostName,
-            Port = _configuration.RabbitMqPort,
-            UserName = _configuration.RabbitMqUserName,
-            Password = _configuration.RabbitMqPassword
-        };
-        _connection = _factory.CreateConnection();
-        _channel = _connection.CreateModel();
-        _channel.QueueDeclare(_configuration.QueueName + ".Output", true, false, false);
-        _channel.BasicQos(0, 1, false);
-        _consumer = new EventingBasicConsumer(_channel);
-        _consumer.Received += onReceiveMessage;
-        _channel.BasicConsume(_configuration.QueueName + ".Output", false, _consumer);
+        _configuration = configuration;
+        _rpcClient = rpcClient;
     }
 
-    private void onReceiveMessage(object? sender, BasicDeliverEventArgs e)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
+        _rpcClient.Start();
+        return Task.CompletedTask;
     }
 
-    public WorkFlow? GetWorkFlow(string name)
+    public Task StopAsync(CancellationToken cancellationToken)
     {
+        _rpcClient.Stop();
+        return Task.CompletedTask;
     }
 }

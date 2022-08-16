@@ -1,6 +1,4 @@
-﻿using WorkFlowManager.Core.Models;
-
-namespace WorkFlowManager.Core.Repository;
+﻿namespace WorkFlowManager.Core.Repository;
 
 public interface IRepository
 {
