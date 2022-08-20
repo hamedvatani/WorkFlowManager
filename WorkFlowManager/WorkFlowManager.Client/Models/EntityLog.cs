@@ -15,15 +15,4 @@ public class EntityLog : BaseModel
     public DateTime TimeStamp { get; set; }
 
     public virtual Entity Entity { get; set; } = null!;
-
-    public static EntityLog FromMethodResult(MethodResult methodResult)
-    {
-        return new EntityLog
-        {
-            IsSuccess = methodResult.IsSuccess,
-            Message = methodResult.Message,
-            ReturnValue = methodResult.ReturnValue,
-            TimeStamp = methodResult.TimeStamp
-        };
-    }
 }

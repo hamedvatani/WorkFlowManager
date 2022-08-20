@@ -1,12 +1,16 @@
-﻿namespace WorkFlowManager.Core.Repository;
+﻿using WorkFlowManager.Client;
+using WorkFlowManager.Client.Models;
+
+namespace WorkFlowManager.Core.Repository;
 
 public interface IRepository
 {
-    // AddOnWorker AddWorker(string fileName, string className);
-    // WorkFlow? GetWorkFlow(string name);
-    // WorkFlow AddWorkFlow(string name, string entityName);
-    // Step AddStep(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType, string description,
-    //     string customUser, string customRole, AddOnWorker? addOnWorker);
-    //
-    // Flow AddFlow(Step sourceStep, Step destinationStep, string condition);
+    List<WorkFlow> GetWorkFlows(int id = 0, string name = "");
+    WorkFlow AddWorkFlow(string name, string entityName);
+
+    Step AddStep(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType, string description,
+        string customUser, string customRole, AddOnWorker? addOnWorker);
+
+    Step? GetStepById(int stepId);
+    Flow AddFlow(Step sourceStep, Step destinationStep, string condition);
 }

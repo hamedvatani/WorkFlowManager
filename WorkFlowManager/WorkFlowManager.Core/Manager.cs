@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
+using WorkFlowManager.Client;
+using WorkFlowManager.Client.Models;
+using WorkFlowManager.Core.Repository;
 using WorkFlowManager.Core.Rpc;
 
 namespace WorkFlowManager.Core;
@@ -7,12 +10,14 @@ public class Manager : IHostedService
 {
     private readonly ManagerConfiguration _configuration;
     private readonly RpcServer _rpcServer;
+    private readonly IRepository _repository;
 
-    public Manager(ManagerConfiguration configuration, RpcServer rpcServer)
+    public Manager(ManagerConfiguration configuration, RpcServer rpcServer, IRepository repository)
     {
         // _repository = repository;
         _configuration = configuration;
         _rpcServer = rpcServer;
+        _repository = repository;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -27,39 +32,42 @@ public class Manager : IHostedService
         return Task.CompletedTask;
     }
 
+    public MethodResult<List<WorkFlow>> GetWorkFlows(int id = 0, string name = "")
+    {
+        return MethodResult<List<WorkFlow>>.Ok(_repository.GetWorkFlows(id, name));
+    }
 
+    public MethodResult<WorkFlow> AddWorkFlow(string name, string entityName)
+    {
+        return MethodResult<WorkFlow>.Ok(_repository.AddWorkFlow(name, entityName));
+    }
 
+    public MethodResult<Step> AddStep(int workFlowId, string name, StepTypeEnum stepType, ProcessTypeEnum processType,
+        string description, string customUser, string customRole, int addOnWorkerId)
+    {
+        var workFlows = _repository.GetWorkFlows(workFlowId);
+        if (workFlows.Count != 1)
+            return MethodResult<Step>.Error("Workflow not found!");
+        AddOnWorker? addOnWorker = null;
+        if (addOnWorkerId != 0)
+        {
+            // TODO Get AddOnWorker
+        }
 
+        return MethodResult<Step>.Ok(_repository.AddStep(workFlows[0], name, stepType, processType, description,
+            customUser, customRole, addOnWorker));
+    }
 
-
-
-    //
-    // public AddOnWorker AddWorker(string fileName, string className)
-    // {
-    //     return _repository.AddWorker(fileName, className);
-    // }
-    //
-    // public WorkFlow? GetWorkFlow(string name)
-    // {
-    //     return _repository.GetWorkFlow(name);
-    // }
-    //
-    // public WorkFlow AddWorkFlow(string name, string entityName)
-    // {
-    //     return _repository.AddWorkFlow(name, entityName);
-    // }
-    //
-    // public Step AddStep(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType,
-    //     string description, string customUser, string customRole, AddOnWorker? addOnWorker)
-    // {
-    //     return _repository.AddStep(workFlow, name, stepType, processType, description, customUser, customRole,
-    //         addOnWorker);
-    // }
-    //
-    // public Flow AddFlow(Step sourceStep, Step destinationStep, string condition)
-    // {
-    //     return _repository.AddFlow(sourceStep, destinationStep, condition);
-    // }
+    public MethodResult<Flow> AddFlow(int sourceStepId, int destinationStepId, string condition)
+    {
+        var sourceStep = _repository.GetStepById(sourceStepId);
+        if (sourceStep == null)
+            return MethodResult<Flow>.Error("Source Step not found!");
+        var destinationStep = _repository.GetStepById(destinationStepId);
+        if (destinationStep == null)
+            return MethodResult<Flow>.Error("Destination Step not found!");
+        return MethodResult<Flow>.Ok(_repository.AddFlow(sourceStep, destinationStep, condition));
+    }
     //
     // public MethodResult ValidateWorkFlow(WorkFlow workFlow)
     // {

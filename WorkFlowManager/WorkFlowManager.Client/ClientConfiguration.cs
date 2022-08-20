@@ -7,4 +7,6 @@ public class ClientConfiguration
     public string RabbitMqPassword { get; set; } = "guest";
     public string QueueName { get; set; } = "WorkFlowManager";
     public int Timeout { get; set; } = 30000;
+    public string ApiAddress { get; set; } = "";
+    public int ApiPort { get; set; }
 }
