@@ -38,6 +38,15 @@ public class MethodResult<T>
         return new MethodResult<T> { IsTimeout = true };
     }
 
+    public T GetResult()
+    {
+        if (!IsSuccess)
+            throw new Exception(Message);
+        if (ReturnValue==null)
+            throw new Exception("Null Value");
+        return ReturnValue;
+    }
+
     // public MethodResult(RpcDto dto)
     // {
     //     try
