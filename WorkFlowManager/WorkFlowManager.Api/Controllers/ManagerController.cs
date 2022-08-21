@@ -17,35 +17,37 @@ public class ManagerController : ControllerBase
     }
 
     [HttpPost("GetWorkFlows")]
-    public ActionResult<List<WorkFlow>> GetWorkFlows([FromBody] GetWorkFlowsDto model)
+    public ActionResult<List<WorkFlowDto>> GetWorkFlows([FromBody] GetWorkFlowsDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return _manager.GetWorkFlows(model.Id, model.Name).ToActionResult();
+        return _manager.GetWorkFlows(model.Id, model.Name)
+            .ToActionResult(x => x.Select(y => new WorkFlowDto(y)).ToList());
     }
 
     [HttpPost("AddWorkFlow")]
-    public ActionResult<WorkFlow> AddWorkFlow([FromBody] AddWorkFlowDto model)
+    public ActionResult<WorkFlowDto> AddWorkFlow([FromBody] AddWorkFlowDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return _manager.AddWorkFlow(model.Name, model.EntityName).ToActionResult();
+        return _manager.AddWorkFlow(model.Name, model.EntityName).ToActionResult(x => new WorkFlowDto(x));
     }
 
     [HttpPost("AddStep")]
-    public ActionResult<WorkFlow> AddStep([FromBody] AddStepDto model)
+    public ActionResult<StepDto> AddStep([FromBody] AddStepDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         return _manager.AddStep(model.WorkFlowId, model.Name, model.StepType, model.ProcessType, model.Description,
-            model.CustomUser, model.CustomRole, model.AddOnWorkerId).ToActionResult();
+            model.CustomUser, model.CustomRole, model.AddOnWorkerId).ToActionResult(x => new StepDto(x));
     }
 
     [HttpPost("AddFlow")]
-    public ActionResult<WorkFlow> AddFlow([FromBody] AddFlowDto model)
+    public ActionResult<FlowDto> AddFlow([FromBody] AddFlowDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return _manager.AddFlow(model.SourceStepId, model.DestinationStepId, model.Condition).ToActionResult();
+        return _manager.AddFlow(model.SourceStepId, model.DestinationStepId, model.Condition)
+            .ToActionResult(x => new FlowDto(x));
     }
 }

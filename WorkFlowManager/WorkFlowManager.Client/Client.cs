@@ -30,18 +30,18 @@ public class Client : IHostedService
         return Task.CompletedTask;
     }
 
-    public MethodResult<List<WorkFlow>> GetWorkFlows(GetWorkFlowsDto model)
+    public MethodResult<List<WorkFlowDto>> GetWorkFlows(GetWorkFlowsDto model)
     {
-        return _apiClient.CallPostApi<GetWorkFlowsDto, List<WorkFlow>>("GetWorkFlows", model);
+        return _apiClient.CallPostApi<GetWorkFlowsDto, List<WorkFlowDto>>("GetWorkFlows", model);
     }
 
-    public MethodResult<WorkFlow> AddWorkFlow(AddWorkFlowDto model)
+    public MethodResult<WorkFlowDto> AddWorkFlow(AddWorkFlowDto model)
     {
-        return _apiClient.CallPostApi<AddWorkFlowDto, WorkFlow>("AddWorkFlow", model);
+        return _apiClient.CallPostApi<AddWorkFlowDto, WorkFlowDto>("AddWorkFlow", model);
     }
 
-    public MethodResult<Step> AddStep(AddStepDto model)
+    public MethodResult<StepDto> AddStep(AddStepDto model)
     {
-        return _apiClient.CallPostApi<AddStepDto, Step>("AddStep", model);
+        return _apiClient.CallPostApi<AddStepDto, StepDto>("AddStep", model);
     }
 }

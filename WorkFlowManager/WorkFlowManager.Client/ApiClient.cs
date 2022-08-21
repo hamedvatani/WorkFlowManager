@@ -20,7 +20,7 @@ public class ApiClient
         {
             var response = _httpClient.PostAsJsonAsync(_baseUri + methodName, model).Result;
             if (!response.IsSuccessStatusCode)
-                return MethodResult<T2>.Error("Bad request!");
+                return MethodResult<T2>.Error(response.ReasonPhrase??"Bad request!");
             var result = response.Content.ReadFromJsonAsync<T2>().Result;
             if (result == null)
                 return MethodResult<T2>.Error("Unknown error!");
