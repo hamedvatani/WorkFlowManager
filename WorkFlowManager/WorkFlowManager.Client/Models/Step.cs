@@ -20,12 +20,7 @@ public class Step : BaseModel
     [ForeignKey(nameof(WorkFlow))]
     public int WorkFlowId { get; set; }
 
-    [ForeignKey(nameof(AddOnWorker))]
-    public int? AddOnWorkerId { get; set; }
-
     public virtual WorkFlow WorkFlow { get; set; } = null!;
-
-    public virtual AddOnWorker? AddOnWorker { get; set; }
 
     [InverseProperty(nameof(Flow.SourceStep))]
     public virtual ICollection<Flow> Heads { get; set; } = null!;

@@ -31,8 +31,7 @@ public class TestRepository : IRepository
         return workFlow;
     }
 
-    public Step AddStep(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType,
-        string description, string customUser, string customRole, AddOnWorker? addOnWorker)
+    public Step AddStep(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType, string description, string customUser, string customRole)
     {
         _lastStepId++;
         var step = new Step
@@ -46,8 +45,6 @@ public class TestRepository : IRepository
             CustomRole = customRole,
             WorkFlowId = workFlow.Id,
             WorkFlow = workFlow,
-            AddOnWorkerId = addOnWorker?.Id,
-            AddOnWorker = addOnWorker,
             Heads = new List<Flow>(),
             Tails = new List<Flow>()
         };

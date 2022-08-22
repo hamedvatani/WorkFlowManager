@@ -42,34 +42,8 @@ public class MethodResult<T>
     {
         if (!IsSuccess)
             throw new Exception(Message);
-        if (ReturnValue==null)
+        if (ReturnValue == null)
             throw new Exception("Null Value");
         return ReturnValue;
     }
-
-    // public MethodResult(RpcDto dto)
-    // {
-    //     try
-    //     {
-    //         IsSuccess = bool.Parse(dto.Parameters["IsSuccess"]);
-    //         IsTimeout = bool.Parse(dto.Parameters["IsTimeout"]);
-    //         Message = dto.Parameters["Message"];
-    //         ReturnValue = dto.Parameters["ReturnValue"];
-    //         TimeStamp = DateTime.Parse(dto.Parameters["TimeStamp"]);
-    //     }
-    //     catch (Exception)
-    //     {
-    //         Message = "Can't parse data!";
-    //     }
-    // }
-    //
-    // public RpcDto ToRpcDto()
-    // {
-    //     return new RpcDto("",
-    //         new KeyValuePair<string, string>("IsSuccess", IsSuccess.ToString()),
-    //         new KeyValuePair<string, string>("IsTimeout", IsTimeout.ToString()),
-    //         new KeyValuePair<string, string>("Message", Message),
-    //         new KeyValuePair<string, string>("ReturnValue", ReturnValue),
-    //         new KeyValuePair<string, string>("TimeStamp", TimeStamp.ToString(CultureInfo.InvariantCulture)));
-    // }
 }

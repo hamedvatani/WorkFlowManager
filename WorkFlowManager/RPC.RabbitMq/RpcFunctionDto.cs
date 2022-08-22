@@ -1,18 +1,14 @@
 ﻿using System.Text;
 using Newtonsoft.Json;
 
-namespace WorkFlowManager.Client;
+namespace RPC.RabbitMq;
 
-public class RpcDto
+public class RpcFunctionDto
 {
-    public string FunctionName { get; set; } = null!;
-    public Dictionary<string, string> Parameters { get; set; } = null!;
+    public string FunctionName { get; set; }
+    public Dictionary<string, string> Parameters { get; set; }
 
-    public RpcDto()
-    {
-    }
-
-    public RpcDto(string functionName, params KeyValuePair<string, string>[] parameters)
+    public RpcFunctionDto(string functionName, params KeyValuePair<string, string>[] parameters)
     {
         FunctionName = functionName;
         Parameters = new Dictionary<string, string>();
@@ -20,9 +16,9 @@ public class RpcDto
             Parameters.Add(parameter.Key, parameter.Value);
     }
 
-    public RpcDto(byte[] data)
+    public RpcFunctionDto(byte[] data)
     {
-        var dto = JsonConvert.DeserializeObject<RpcDto>(Encoding.UTF8.GetString(data));
+        var dto = JsonConvert.DeserializeObject<RpcFunctionDto>(Encoding.UTF8.GetString(data));
         if (dto == null)
             throw new Exception("Can't deserialize data");
         FunctionName = dto.FunctionName;

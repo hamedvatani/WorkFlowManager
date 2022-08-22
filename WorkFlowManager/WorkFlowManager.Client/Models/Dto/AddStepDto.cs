@@ -19,5 +19,4 @@ public class AddStepDto
     public string Description { get; set; } = "";
     public string CustomUser { get; set; } = "";
     public string CustomRole { get; set; } = "";
-    public int AddOnWorkerId { get; set; } = 0;
 }

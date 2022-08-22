@@ -2,33 +2,28 @@
 using WorkFlowManager.Client;
 using WorkFlowManager.Client.Models;
 using WorkFlowManager.Core.Repository;
-using WorkFlowManager.Core.Rpc;
 
 namespace WorkFlowManager.Core;
 
 public class Manager : IHostedService
 {
     private readonly ManagerConfiguration _configuration;
-    private readonly RpcServer _rpcServer;
     private readonly IRepository _repository;
 
-    public Manager(ManagerConfiguration configuration, RpcServer rpcServer, IRepository repository)
+    public Manager(ManagerConfiguration configuration, IRepository repository)
     {
-        // _repository = repository;
+        _repository = repository;
         _configuration = configuration;
-        _rpcServer = rpcServer;
         _repository = repository;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _rpcServer.Start();
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _rpcServer.Stop();
         return Task.CompletedTask;
     }
 
@@ -43,19 +38,13 @@ public class Manager : IHostedService
     }
 
     public MethodResult<Step> AddStep(int workFlowId, string name, StepTypeEnum stepType, ProcessTypeEnum processType,
-        string description, string customUser, string customRole, int addOnWorkerId)
+        string description, string customUser, string customRole)
     {
         var workFlows = _repository.GetWorkFlows(workFlowId);
         if (workFlows.Count != 1)
             return MethodResult<Step>.Error("Workflow not found!");
-        AddOnWorker? addOnWorker = null;
-        if (addOnWorkerId != 0)
-        {
-            // TODO Get AddOnWorker
-        }
-
         return MethodResult<Step>.Ok(_repository.AddStep(workFlows[0], name, stepType, processType, description,
-            customUser, customRole, addOnWorker));
+            customUser, customRole));
     }
 
     public MethodResult<Flow> AddFlow(int sourceStepId, int destinationStepId, string condition)

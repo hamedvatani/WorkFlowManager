@@ -17,7 +17,7 @@ namespace ShoppingCard.Test
                 ApiAddress = "localhost",
                 ApiPort = 42578
             };
-            _biz = new ShoppingCardBiz(new Client(config, new ApiClient(config), new RpcClient(config)));
+            _biz = new ShoppingCardBiz(new Client(config, new ApiClient(config)));
             _biz.CreateWorkFlow();
         }
 

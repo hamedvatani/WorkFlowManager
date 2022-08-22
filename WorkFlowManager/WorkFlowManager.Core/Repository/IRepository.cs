@@ -1,5 +1,4 @@
-﻿using WorkFlowManager.Client;
-using WorkFlowManager.Client.Models;
+﻿using WorkFlowManager.Client.Models;
 
 namespace WorkFlowManager.Core.Repository;
 
@@ -9,7 +8,7 @@ public interface IRepository
     WorkFlow AddWorkFlow(string name, string entityName);
 
     Step AddStep(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType, string description,
-        string customUser, string customRole, AddOnWorker? addOnWorker);
+        string customUser, string customRole);
 
     Step? GetStepById(int stepId);
     Flow AddFlow(Step sourceStep, Step destinationStep, string condition);

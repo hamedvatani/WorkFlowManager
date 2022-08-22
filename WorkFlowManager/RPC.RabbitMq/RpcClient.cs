@@ -2,37 +2,45 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace WorkFlowManager.Client;
+namespace RPC.RabbitMq;
 
 public class RpcClient
 {
-    private readonly ClientConfiguration _configuration;
+    private readonly RpcConfiguration _configuration;
 
     private IConnection _connection = null!;
     private IModel _channel = null!;
-    private ConcurrentDictionary<string, TaskCompletionSource<RpcDto>?> _callbackMapper = new();
-    
-    public RpcClient(ClientConfiguration configuration)
+    private readonly ConcurrentDictionary<string, TaskCompletionSource<RpcResultDto>?> _callbackMapper = new();
+
+    public RpcClient(RpcConfiguration configuration)
     {
         _configuration = configuration;
     }
 
-    public Task<RpcDto> CallAsync(RpcDto message, CancellationToken cancellationToken = default(CancellationToken))
+    public Task<RpcResultDto> CallAsync(RpcFunctionDto message, CancellationToken cancellationToken = default)
     {
         IBasicProperties props = _channel.CreateBasicProperties();
         var correlationId = Guid.NewGuid().ToString();
         props.CorrelationId = correlationId;
-        var tcs = new TaskCompletionSource<RpcDto>();
+        var tcs = new TaskCompletionSource<RpcResultDto>();
         _callbackMapper.TryAdd(correlationId, tcs);
 
         _channel.BasicPublish(
             exchange: "",
-            routingKey: _configuration.QueueName + ".Input",
+            routingKey: _configuration.InputQueueName,
             basicProperties: props,
             body: message.Serialize());
 
         cancellationToken.Register(() => _callbackMapper.TryRemove(correlationId, out _));
         return tcs.Task;
+    }
+
+    public RpcResultDto Call(RpcFunctionDto message, CancellationToken cancellationToken = default)
+    {
+        var t = CallAsync(message, cancellationToken);
+        if (Task.WhenAny(t, Task.Delay(_configuration.Timeout, cancellationToken)).Result != t)
+            return new RpcResultDto(false, true, "Timeout");
+        return t.Result;
     }
 
     public void Start()
@@ -45,23 +53,23 @@ public class RpcClient
         };
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
-        _channel.QueueDeclare(_configuration.QueueName + ".Input", true, false, false);
-        _channel.QueueDeclare(_configuration.QueueName + ".Output", true, false, false);
+        _channel.QueueDeclare(_configuration.InputQueueName, true, false, false);
+        _channel.QueueDeclare(_configuration.OutputQueueName, true, false, false);
         var consumer = new EventingBasicConsumer(_channel);
         consumer.Received += (_, ea) =>
         {
-            if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<RpcDto>? tcs))
+            if (!_callbackMapper.TryRemove(ea.BasicProperties.CorrelationId, out TaskCompletionSource<RpcResultDto>? tcs))
                 return;
             if (tcs == null)
                 return;
             var body = ea.Body.ToArray();
-            var response = new RpcDto(body);
+            var response = new RpcResultDto(body);
             tcs.TrySetResult(response);
         };
 
         _channel.BasicConsume(
             consumer: consumer,
-            queue: _configuration.QueueName + ".Output",
+            queue: _configuration.OutputQueueName,
             autoAck: true);
     }
 

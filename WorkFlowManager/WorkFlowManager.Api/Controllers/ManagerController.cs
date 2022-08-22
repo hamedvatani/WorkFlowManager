@@ -39,7 +39,7 @@ public class ManagerController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         return _manager.AddStep(model.WorkFlowId, model.Name, model.StepType, model.ProcessType, model.Description,
-            model.CustomUser, model.CustomRole, model.AddOnWorkerId).ToActionResult(x => new StepDto(x));
+            model.CustomUser, model.CustomRole).ToActionResult(x => new StepDto(x));
     }
 
     [HttpPost("AddFlow")]
