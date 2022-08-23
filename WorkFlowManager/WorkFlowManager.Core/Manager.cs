@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using RPC.RabbitMq;
 using WorkFlowManager.Client;
 using WorkFlowManager.Client.Models;
 using WorkFlowManager.Core.Repository;
@@ -9,22 +10,34 @@ public class Manager : IHostedService
 {
     private readonly ManagerConfiguration _configuration;
     private readonly IRepository _repository;
+    private readonly RpcServer _rpcServer;
 
-    public Manager(ManagerConfiguration configuration, IRepository repository)
+    public Manager(ManagerConfiguration configuration, IRepository repository, RpcServer rpcServer)
     {
         _repository = repository;
+        _rpcServer = rpcServer;
         _configuration = configuration;
         _repository = repository;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
+        _rpcServer.Start(RpcFunction);
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
+    }
+
+    private RpcResultDto RpcFunction(RpcFunctionDto arg)
+    {
+        switch (arg.FunctionName)
+        {
+            default:
+                return new RpcResultDto(false, false, "Unknown function name!");
+        }
     }
 
     public MethodResult<List<WorkFlow>> GetWorkFlows(int id = 0, string name = "")
@@ -58,74 +71,17 @@ public class Manager : IHostedService
         return MethodResult<Flow>.Ok(_repository.AddFlow(sourceStep, destinationStep, condition));
     }
 
+    private MethodResult<string> StartWorkFlow(IEntity entity, int workFlowId)
+    {
+        var workFlows = _repository.GetWorkFlows(workFlowId);
+        if (workFlows.Count != 1)
+            return MethodResult<string>.Error("WorkFlow not found!");
+        var workFlow = workFlows[0];
+        if (!workFlow.IsValid())
+            return MethodResult<string>.Error(workFlow.GetValidationError());
 
-    //
-    // public MethodResult ValidateWorkFlow(WorkFlow workFlow)
-    // {
-    //     if (workFlow.Steps.Count(step => step.StepType == StepTypeEnum.Start) != 1)
-    //         return MethodResult.Error("Workflow has to have exact one start step");
-    //     var start = workFlow.Steps.FirstOrDefault(step => step.StepType == StepTypeEnum.Start);
-    //     if (start == null)
-    //         return MethodResult.Error("");
-    //     if (start.Tails.Count > 0)
-    //         return MethodResult.Error("There is a flow to start step");
-    //     if (start.ProcessType != ProcessTypeEnum.None)
-    //         return MethodResult.Error("Start step process type must be None");
-    //
-    //     if (workFlow.Steps.Count(step => step.StepType == StepTypeEnum.End) != 1)
-    //         return MethodResult.Error("Workflow has to have exact one end step");
-    //     var end = workFlow.Steps.FirstOrDefault(step => step.StepType == StepTypeEnum.End);
-    //     if (end == null)
-    //         return MethodResult.Error("");
-    //     if (end.Heads.Count > 0)
-    //         return MethodResult.Error("There is a flow from end step");
-    //     if (end.ProcessType != ProcessTypeEnum.None)
-    //         return MethodResult.Error("End step process type must be None");
-    //
-    //     foreach (var step in workFlow.Steps)
-    //     {
-    //         if (step.Heads.Count(flow => flow.Condition == "") > 1)
-    //             return MethodResult.Error($"Step {step.Name} has more than one unconditional flow");
-    //         if (step.StepType != StepTypeEnum.Start && step.Tails.Count == 0)
-    //             return MethodResult.Error($"There is no flow to step {step.Name}");
-    //         if (step.StepType != StepTypeEnum.End && step.Heads.Count == 0)
-    //             return MethodResult.Error($"There is no flow from step {step.Name}");
-    //         if (step.StepType == StepTypeEnum.Start || step.StepType == StepTypeEnum.Process)
-    //         {
-    //             if (step.Heads.Count != 1)
-    //                 return MethodResult.Error($"step {step.Name} has to have exact one unconditional flow out");
-    //             var f = step.Heads.ToList()[0];
-    //             if (f.Condition != "")
-    //                 return MethodResult.Error($"step {step.Name} has to have exact one unconditional flow out");
-    //         }
-    //     }
-    //
-    //     return MethodResult.Ok();
-    // }
-    //
-    // private void RunStep(Step step)
-    // {
-    //     if (step.StepType == StepTypeEnum.Process || step.StepType == StepTypeEnum.Condition)
-    //     {
-    //         switch (step.ProcessType)
-    //         {
-    //             case ProcessTypeEnum.AddOnWorker:
-    //                 break;
-    //             case ProcessTypeEnum.Service:
-    //                 break;
-    //             case ProcessTypeEnum.StarterUser:
-    //                 break;
-    //             case ProcessTypeEnum.StarterRole:
-    //                 break;
-    //             case ProcessTypeEnum.CustomUser:
-    //                 break;
-    //             case ProcessTypeEnum.CustomRole:
-    //                 break;
-    //             case ProcessTypeEnum.None:
-    //                 break;
-    //             default:
-    //                 throw new ArgumentOutOfRangeException();
-    //         }
-    //     }
-    // }
+
+
+
+    }
 }

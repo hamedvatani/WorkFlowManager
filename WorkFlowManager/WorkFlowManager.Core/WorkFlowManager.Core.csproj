@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RPC.RabbitMq\RPC.RabbitMq.csproj" />
     <ProjectReference Include="..\WorkFlowManager.Client\WorkFlowManager.Client.csproj" />
   </ItemGroup>
 
