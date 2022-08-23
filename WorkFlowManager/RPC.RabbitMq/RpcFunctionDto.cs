@@ -5,8 +5,12 @@ namespace RPC.RabbitMq;
 
 public class RpcFunctionDto
 {
-    public string FunctionName { get; set; }
-    public Dictionary<string, string> Parameters { get; set; }
+    public string FunctionName { get; set; } = "";
+    public Dictionary<string, string> Parameters { get; set; } = null!;
+
+    public RpcFunctionDto()
+    {
+    }
 
     public RpcFunctionDto(string functionName, params KeyValuePair<string, string>[] parameters)
     {

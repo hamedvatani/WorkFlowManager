@@ -7,8 +7,12 @@ public class RpcResultDto
 {
     public bool IsSuccess { get; set; }
     public bool IsTimeout { get; set; }
-    public string Message { get; set; }
-    public Dictionary<string, string> Parameters { get; set; }
+    public string Message { get; set; } = "";
+    public Dictionary<string, string> Parameters { get; set; } = null!;
+
+    public RpcResultDto()
+    {
+    }
 
     public RpcResultDto(bool isSuccess, bool isTimeout, string message,
         params KeyValuePair<string, string>[] parameters)
