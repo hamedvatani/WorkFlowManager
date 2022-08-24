@@ -5,10 +5,14 @@ namespace WorkFlowManager.Core.Repository;
 public class TestRepository : IRepository
 {
     private readonly List<WorkFlow> _workFlows = new();
+    private readonly List<Entity> _entities = new();
+    private readonly List<EntityLog> _entityLogs = new();
 
     private int _lastWorkFlowId;
     private int _lastStepId;
     private int _lastFlowId;
+    private int _lastEntityId;
+    private int _lastEntityLogId;
 
     public List<WorkFlow> GetWorkFlows(int id = 0, string name = "")
     {
@@ -17,14 +21,13 @@ public class TestRepository : IRepository
             .ToList();
     }
 
-    public WorkFlow AddWorkFlow(string name, string entityName)
+    public WorkFlow AddWorkFlow(string name)
     {
         _lastWorkFlowId++;
         var workFlow = new WorkFlow
         {
             Id = _lastWorkFlowId,
             Name = name,
-            EntityName = entityName,
             Steps = new List<Step>()
         };
         _workFlows.Add(workFlow);
@@ -72,5 +75,43 @@ public class TestRepository : IRepository
         sourceStep.Heads.Add(flow);
         destinationStep.Tails.Add(flow);
         return flow;
+    }
+
+    public Entity AddEntity(string json, string starterUser, string starterRole)
+    {
+        _lastEntityId++;
+        var entity = new Entity
+        {
+            Id = _lastEntityId,
+            Json = json,
+            StarterUser = starterUser,
+            StarterRole = starterRole,
+            EntityLogs = new List<EntityLog>()
+        };
+        _entities.Add(entity);
+        return entity;
+    }
+
+    public EntityLog AddEntityLog(Entity entity, DateTime timeStamp, EntityLogSeverityEnum severity, string subject,
+        string description)
+    {
+        _lastEntityLogId++;
+        var entityLog = new EntityLog
+        {
+            Id = _lastEntityLogId,
+            EntityId = entity.Id,
+            TimeStamp = timeStamp,
+            Severity = severity,
+            Subject = subject,
+            Description = description,
+            Entity = entity
+        };
+        _entityLogs.Add(entityLog);
+        return entityLog;
+    }
+
+    public Entity? GetEntityById(int id)
+    {
+        return _entities.FirstOrDefault(e => e.Id == id);
     }
 }

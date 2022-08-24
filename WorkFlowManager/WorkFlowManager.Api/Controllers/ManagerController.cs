@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkFlowManager.Client.Models;
 using WorkFlowManager.Client.Models.Dto;
 using WorkFlowManager.Core;
 
@@ -30,7 +29,7 @@ public class ManagerController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return _manager.AddWorkFlow(model.Name, model.EntityName).ToActionResult(x => new WorkFlowDto(x));
+        return _manager.AddWorkFlow(model.Name).ToActionResult(x => new WorkFlowDto(x));
     }
 
     [HttpPost("AddStep")]

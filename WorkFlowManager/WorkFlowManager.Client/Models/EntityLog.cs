@@ -9,10 +9,10 @@ public class EntityLog : BaseModel
     [ForeignKey(nameof(Entity))]
     public int EntityId { get; set; }
 
-    public bool IsSuccess { get; set; }
-    public string Message { get; set; } = "";
-    public string ReturnValue { get; set; } = "";
-    public DateTime TimeStamp { get; set; }
+    public DateTime TimeStamp { get; set; } = DateTime.Now;
+    public EntityLogSeverityEnum Severity { get; set; }
+    public string Subject { get; set; } = "";
+    public string Description { get; set; } = "";
 
     public virtual Entity Entity { get; set; } = null!;
 }

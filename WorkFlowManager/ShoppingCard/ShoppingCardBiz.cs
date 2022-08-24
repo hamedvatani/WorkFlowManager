@@ -11,19 +11,20 @@ public class ShoppingCardBiz
     public ShoppingCardBiz(Client client)
     {
         _client = client;
+        _client.StartAsync(CancellationToken.None);
     }
 
-    public void CreateWorkFlow()
+    public int CreateWorkFlow()
     {
         var result = _client.GetWorkFlows(new GetWorkFlowsDto {Name = "MyWorkFlow"});
         if (!result.IsSuccess)
-            return;
+            return 0;
         if (result.ReturnValue == null)
-            return;
+            return 0;
         if (result.ReturnValue.Count == 1)
-            return;
+            return result.GetResult()[0].Id;
 
-        var workFlow = _client.AddWorkFlow(new AddWorkFlowDto {Name = "MyWorkFlow", EntityName = "ShoppingCard"})
+        var workFlow = _client.AddWorkFlow(new AddWorkFlowDto {Name = "MyWorkFlow"})
             .GetResult();
 
         var startStep = _client.AddStep(new AddStepDto
@@ -120,5 +121,46 @@ public class ShoppingCardBiz
             DestinationStepId = errorReportStep.Id,
             Condition = "Reject"
         });
+
+        return workFlow.Id;
+    }
+
+    public Card CreateAllExistsCard()
+    {
+        return new Card
+        {
+            Items = new List<Item>
+            {
+                new Item
+                {
+                    Name = "Shoe",
+                    Quantity = 10,
+                    Stock = 20
+                },
+                new Item
+                {
+                    Name = "TShirt",
+                    Quantity = 3,
+                    Stock = 15
+                },
+                new Item
+                {
+                    Name = "Sunglasses",
+                    Quantity = 2,
+                    Stock = 10
+                },
+                new Item
+                {
+                    Name = "Watch",
+                    Quantity = 15,
+                    Stock = 30
+                }
+            }
+        };
+    }
+
+    public MethodResult<int> StartWorkFlow(Card card, string user, int workFlowId)
+    {
+        return _client.StartWorkFlow(card, user, "", workFlowId);
     }
 }

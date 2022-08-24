@@ -4,7 +4,6 @@ public sealed class WorkFlowDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = "";
-    public string EntityName { get; set; } = "";
     public List<StepDto> Steps { get; set; } = new();
 
     public WorkFlowDto()
@@ -15,7 +14,6 @@ public sealed class WorkFlowDto
     {
         Id = workFlow.Id;
         Name = workFlow.Name;
-        EntityName = workFlow.EntityName;
         Steps = workFlow.Steps.Select(x => new StepDto(x)).ToList();
     }
 
@@ -25,7 +23,6 @@ public sealed class WorkFlowDto
         {
             Id = Id,
             Name = Name,
-            EntityName = EntityName,
             Steps = Steps.Select(x => x.ToStep()).ToList()
         };
 

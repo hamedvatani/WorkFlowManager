@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using JobHandler.RabbitMq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using RPC.RabbitMq;
+using WorkFlowManager.Client;
 using WorkFlowManager.Client.Models;
+using WorkFlowManager.Core.Data;
 using WorkFlowManager.Core.Repository;
 
 namespace WorkFlowManager.Core;
@@ -14,8 +18,15 @@ public static class Extensions
         configBuilder?.Invoke(config);
 
         services.AddSingleton(config);
+        services.AddDbContext<WorkFlowManagerContext>(options =>
+        {
+            if (config.UseSqlServerDb)
+                options.UseSqlServer(config.ConnectionString);
+            else if (config.UseSqliteDb)
+                options.UseSqlite(config.ConnectionString);
+        });
         services.AddSingleton<IRepository, TestRepository>();
-        services.AddSingleton<RpcConfiguration>(new RpcConfiguration
+        services.AddSingleton(new RpcConfiguration
         {
             RabbitMqHostName = config.RabbitMqHostName,
             RabbitMqUserName = config.RabbitMqUserName,
@@ -25,6 +36,23 @@ public static class Extensions
             Timeout = config.Timeout
         });
         services.AddSingleton<RpcServer>();
+        services.AddRabbitMqJobSender(c =>
+        {
+            c.HostName = config.RabbitMqHostName;
+            c.UserName = config.RabbitMqUserName;
+            c.Password = config.RabbitMqPassword;
+            c.Durable = true;
+            c.GroupName = config.QueueName;
+
+        });
+        services.AddRabbitMqJobExecutor<Job>(c =>
+        {
+            c.HostName = config.RabbitMqHostName;
+            c.UserName = config.RabbitMqUserName;
+            c.Password = config.RabbitMqPassword;
+            c.Durable = true;
+            c.GroupName = config.QueueName;
+        });
         services.AddSingleton<Manager>();
         services.AddHostedService<Manager>();
         return services;

@@ -28,11 +28,6 @@ public class MethodResult<T>
         return new MethodResult<T> { Message = message };
     }
 
-    public static MethodResult<T> Error(string message, T returnValue)
-    {
-        return new MethodResult<T> { Message = message, ReturnValue = returnValue };
-    }
-
     public static MethodResult<T> Timeout()
     {
         return new MethodResult<T> { IsTimeout = true };
@@ -45,5 +40,17 @@ public class MethodResult<T>
         if (ReturnValue == null)
             throw new Exception("Null Value");
         return ReturnValue;
+    }
+
+    public override string ToString()
+    {
+        var retVal = IsSuccess ? "Ok." : "Fail!";
+        if (IsTimeout)
+            retVal += " Timeout!";
+        if (IsSuccess && ReturnValue == null)
+            retVal += " Result: NULL";
+        if (IsSuccess && ReturnValue != null)
+            retVal += $" Result: {ReturnValue}";
+        return retVal;
     }
 }

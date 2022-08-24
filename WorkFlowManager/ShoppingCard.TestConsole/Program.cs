@@ -6,8 +6,11 @@ var config = new ClientConfiguration
     ApiAddress = "localhost",
     ApiPort = 42578
 };
-var _biz = new ShoppingCardBiz(new Client(config, new ApiClient(config)));
-_biz.CreateWorkFlow();
+var biz = new ShoppingCardBiz(new Client(config, new ApiClient(config)));
+int workFlowId = biz.CreateWorkFlow();
+var allExistsCard = biz.CreateAllExistsCard();
+
+Console.WriteLine(biz.StartWorkFlow(allExistsCard, "TestUser", workFlowId));
 
 Console.WriteLine("Press <ENTER> to exit ...");
 Console.ReadLine();
