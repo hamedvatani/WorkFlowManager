@@ -158,9 +158,4 @@ public class ShoppingCardBiz
             }
         };
     }
-
-    public MethodResult<int> StartWorkFlow(Card card, string user, int workFlowId)
-    {
-        return _client.StartWorkFlow(card, user, "", workFlowId);
-    }
 }

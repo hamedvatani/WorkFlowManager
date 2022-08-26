@@ -4,18 +4,12 @@ namespace WorkFlowManager.Core.Repository;
 
 public interface IRepository
 {
-    List<WorkFlow> GetWorkFlows(int id = 0, string name = "");
-    WorkFlow AddWorkFlow(string name);
+    Task<List<WorkFlow>> GetWorkFlowsAsync(int id = 0, string name = "");
+    Task<WorkFlow> AddWorkFlowAsync(string name);
 
-    Step AddStep(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType, string description,
+    Task<Step> AddStepAsync(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType, string description,
         string customUser, string customRole);
 
-    Step? GetStepById(int stepId);
-    Flow AddFlow(Step sourceStep, Step destinationStep, string condition);
-    Entity AddEntity(string json, string starterUser, string starterRole);
-
-    EntityLog AddEntityLog(Entity entity, DateTime timeStamp, EntityLogSeverityEnum severity, string subject,
-        string description);
-
-    Entity? GetEntityById(int id);
+    Task<Step?> GetStepByIdAsync(int id);
+    Task<Flow> AddFlowAsync(Step sourceStep, Step destinationStep, string condition);
 }
