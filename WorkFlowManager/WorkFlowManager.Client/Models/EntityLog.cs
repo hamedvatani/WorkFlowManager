@@ -10,9 +10,14 @@ public class EntityLog : BaseModel
     public int EntityId { get; set; }
 
     public DateTime TimeStamp { get; set; } = DateTime.Now;
-    public EntityLogSeverityEnum Severity { get; set; }
+    public EntityLogTypeEnum LogType { get; set; }
+
+    [ForeignKey(nameof(Step))]
+    public int? StepId { get; set; } = null;
+
     public string Subject { get; set; } = "";
     public string Description { get; set; } = "";
 
     public virtual Entity Entity { get; set; } = null!;
+    public virtual Step? Step { get; set; } = null;
 }

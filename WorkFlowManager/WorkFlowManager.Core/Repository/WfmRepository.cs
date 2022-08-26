@@ -61,4 +61,40 @@ public class WfmRepository : IRepository
         _context.SaveChangesAsync();
         return Task.FromResult(flow);
     }
+
+    public Task<Entity> AddEntityAsync(string json, string starterUser, string starterRole, EntityStatusEnum status)
+    {
+        var entity = new Entity
+        {
+            Json=json,
+            StarterUser = starterUser,
+            StarterRole = starterRole,
+            Status = status
+        };
+        _context.Entities.Add(entity);
+        _context.SaveChangesAsync();
+        return Task.FromResult(entity);
+    }
+
+    public Task ChangeStatusAsync(Entity entity, Step step, EntityStatusEnum status)
+    {
+        entity.CurrentStep = step;
+        entity.Status = status;
+        _context.SaveChangesAsync();
+        return Task.CompletedTask;
+    }
+
+    public Task<EntityLog> AddEntityLogAsync(Entity entity, Step? step, EntityLogTypeEnum logType, string subject, string description)
+    {
+        var entityLog = new EntityLog
+        {
+            Entity = entity,
+            Step = step,
+            LogType = logType,
+            Subject = subject,
+            Description = description
+        };
+        _context.SaveChangesAsync();
+        return Task.FromResult(entityLog);
+    }
 }

@@ -14,9 +14,9 @@ public class Entity : BaseModel
     public DateTime LastRunDate { get; set; } = DateTime.Now;
 
     [ForeignKey(nameof(CurrentStep))]
-    public int? CurrentStepId { get; set; }
+    public int? CurrentStepId { get; set; } = null;
 
-    public Step? CurrentStep { get; set; }
-
+    public virtual Step? CurrentStep { get; set; } = null;
+    
     public virtual ICollection<EntityLog> EntityLogs { get; set; } = null!;
 }
