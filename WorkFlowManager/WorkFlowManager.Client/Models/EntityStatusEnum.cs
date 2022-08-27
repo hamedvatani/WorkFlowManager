@@ -6,5 +6,7 @@ public enum EntityStatusEnum
     Start,
     RunningStep,
     FailInStep,
+    WaitForService,
+    WaitForCartable,
     End
 }

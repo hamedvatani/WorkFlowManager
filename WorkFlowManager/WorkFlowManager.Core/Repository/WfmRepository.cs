@@ -76,10 +76,16 @@ public class WfmRepository : IRepository
         return Task.FromResult(entity);
     }
 
-    public Task ChangeStatusAsync(Entity entity, Step step, EntityStatusEnum status)
+    public Task<Entity?> GetEntityByIdAsync(int id)
+    {
+        return _context.Entities.FirstOrDefaultAsync(e => e.Id == id);
+    }
+
+    public Task ChangeStatusAsync(Entity entity, Step step, EntityStatusEnum status, string description)
     {
         entity.CurrentStep = step;
         entity.Status = status;
+        entity.Description = description;
         _context.SaveChangesAsync();
         return Task.CompletedTask;
     }
@@ -96,5 +102,45 @@ public class WfmRepository : IRepository
         };
         _context.SaveChangesAsync();
         return Task.FromResult(entityLog);
+    }
+
+    public Task<Cartable> AddCartableAsync(Entity entity, Step step, string user, string role, string possibleActions)
+    {
+        var cartable = new Cartable
+        {
+            Entity = entity,
+            Step = step,
+            User = user,
+            Role = role,
+            PossibleActions = possibleActions
+        };
+        _context.Cartables.Add(cartable);
+        _context.SaveChangesAsync();
+        return Task.FromResult(cartable);
+    }
+
+    public Task<bool> DeleteCartableAsync(int id)
+    {
+        var cartable = _context.Cartables.FirstOrDefault(c => c.Id == id);
+        if (cartable == null)
+            return Task.FromResult(false);
+        _context.Cartables.Remove(cartable);
+        _context.SaveChangesAsync();
+        return Task.FromResult(true);
+    }
+
+    public Task<Cartable?> GetCartableByIdAsync(int id)
+    {
+        return _context.Cartables.FirstOrDefaultAsync(c => c.Id == id);
+    }
+
+    public Task<List<Cartable>> GetUserCartablesAsync(string user)
+    {
+        return _context.Cartables.Where(c => c.User == user).ToListAsync();
+    }
+
+    public Task<List<Cartable>> GetRoleCartablesAsync(string role)
+    {
+        return _context.Cartables.Where(c => c.Role == role).ToListAsync();
     }
 }

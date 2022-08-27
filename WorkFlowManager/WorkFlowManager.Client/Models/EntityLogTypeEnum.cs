@@ -6,6 +6,9 @@ public enum EntityLogTypeEnum
     StartStep,
     AddOnSucceed,
     AddOnFailed,
+    ServiceSucceed,
+    ServiceFailed,
+    CartableSucceed,
     GeneralSucceed,
     GeneralFailed
 }

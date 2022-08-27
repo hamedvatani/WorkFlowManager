@@ -25,7 +25,6 @@ public static class Extensions
         services.AddDbContext<WorkFlowManagerContext>();
         services.AddSingleton<IRepository, WfmRepository>();
         services.AddSingleton<Manager>();
-        services.AddHostedService<Manager>();
         return services;
     }
 
@@ -67,6 +66,11 @@ public static class Extensions
                 if (f.Condition != "")
                     return $"step {step.Name} has to have exact one unconditional flow out";
             }
+
+            if (step.StepType == StepTypeEnum.Condition && step.Heads.Count < 2)
+                return $"step {step.Name} has to have more than one condition";
+            if (step.Heads.Count > 0 && step.Heads.Count != step.Heads.Select(s => s.Condition).Distinct().Count())
+                return $"step {step.Name} has repetitious condition";
         }
 
         return "";

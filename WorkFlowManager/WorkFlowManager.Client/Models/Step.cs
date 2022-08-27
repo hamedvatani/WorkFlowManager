@@ -16,6 +16,11 @@ public class Step : BaseModel
     public string CustomUser { get; set; } = "";
     public string CustomRole { get; set; } = "";
 
+    public string AddOnWorkerDllFileName { get; set; } = "";
+    public string AddOnWorkerClassName { get; set; } = "";
+    public string ServiceName { get; set; } = "";
+    public string ServiceQueueName { get; set; } = "";
+
     [Required]
     [ForeignKey(nameof(WorkFlow))]
     public int WorkFlowId { get; set; }

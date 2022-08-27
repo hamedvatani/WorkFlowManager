@@ -4,7 +4,7 @@ using WorkFlowManager.Client.Models.Dto;
 
 namespace WorkFlowManager.Client;
 
-public class Client : IHostedService
+public class Client
 {
     private readonly ClientConfiguration _configuration;
     private readonly ApiClient _apiClient;
@@ -13,16 +13,6 @@ public class Client : IHostedService
     {
         _configuration = configuration;
         _apiClient = apiClient;
-    }
-
-    public Task StartAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
     }
 
     public MethodResult<List<WorkFlowDto>> GetWorkFlows(GetWorkFlowsDto model)

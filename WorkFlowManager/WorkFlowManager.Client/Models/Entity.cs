@@ -11,7 +11,8 @@ public class Entity : BaseModel
     public string StarterUser { get; set; } = "";
     public string StarterRole { get; set; } = "";
     public EntityStatusEnum Status { get; set; }
-    public DateTime LastRunDate { get; set; } = DateTime.Now;
+    public string Description { get; set; } = "";
+    public DateTime LastUpdateDate { get; set; } = DateTime.Now;
 
     [ForeignKey(nameof(CurrentStep))]
     public int? CurrentStepId { get; set; } = null;
