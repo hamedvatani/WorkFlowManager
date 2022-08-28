@@ -8,8 +8,8 @@ public interface IRepository
     Task<WorkFlow> AddWorkFlowAsync(string name);
 
     Task<Step> AddStepAsync(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType,
-        string description,
-        string customUser, string customRole);
+        string description, string customUser, string customRole, string addOnWorkerDllFileName,
+        string addOnWorkerClassName);
 
     Task<Step?> GetStepByIdAsync(int id);
     Task<Flow> AddFlowAsync(Step sourceStep, Step destinationStep, string condition);
@@ -20,9 +20,14 @@ public interface IRepository
     Task<EntityLog> AddEntityLogAsync(Entity entity, Step? step, EntityLogTypeEnum logType, string subject,
         string description);
 
-    Task<Cartable> AddCartableAsync(Entity entity, Step step, string user, string role, string possibleActions);
-    Task<bool> DeleteCartableAsync(int id);
-    Task<Cartable?> GetCartableByIdAsync(int id);
-    Task<List<Cartable>> GetUserCartablesAsync(string user);
-    Task<List<Cartable>> GetRoleCartablesAsync(string role);
+    Task<UserRoleCartable> AddUserRoleCartableAsync(Entity entity, Step step, string user, string role, string possibleActions);
+    Task<bool> DeleteUserRoleCartableAsync(int id);
+    Task<UserRoleCartable?> GetUserRoleCartableByIdAsync(int id);
+    Task<List<UserRoleCartable>> GetUserCartablesAsync(string user);
+    Task<List<UserRoleCartable>> GetRoleCartablesAsync(string role);
+
+    Task<ServiceCartable> AddServiceCartableAsync(Entity entity, Step step, string serviceName, string possibleActions);
+    Task<bool> DeleteServiceCartableAsync(int id);
+    Task<ServiceCartable?> GetServiceCartableByIdAsync(int id);
+    Task<List<ServiceCartable>> GetServiceCartablesAsync(string serviceName);
 }

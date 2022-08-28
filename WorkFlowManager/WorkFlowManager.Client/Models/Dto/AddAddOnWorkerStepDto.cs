@@ -2,7 +2,7 @@
 
 namespace WorkFlowManager.Client.Models.Dto;
 
-public class AddStepDto
+public class AddAddOnWorkerStepDto
 {
     [Required]
     public int WorkFlowId { get; set; }
@@ -17,6 +17,10 @@ public class AddStepDto
     public ProcessTypeEnum ProcessType { get; set; }
 
     public string Description { get; set; } = "";
-    public string CustomUser { get; set; } = "";
-    public string CustomRole { get; set; } = "";
+
+    [Required]
+    public string AddOnWorkerDllFileName { get; set; } = "";
+
+    [Required]
+    public string AddOnWorkerClassName { get; set; } = "";
 }

@@ -32,12 +32,40 @@ public class ManagerController : ControllerBase
         return (await _manager.AddWorkFlowAsync(model.Name)).ToActionResult(x => new WorkFlowDto(x));
     }
 
-    [HttpPost("AddStep")]
-    public async Task<ActionResult<StepDto>> AddStep([FromBody] AddStepDto model)
+    [HttpPost("AddStartStep")]
+    public async Task<ActionResult<StepDto>> AddStartStep([FromBody] AddStartStepDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return (await _manager.AddStepAsync(model.WorkFlowId, model.Name, model.StepType, model.ProcessType,
+        return (await _manager.AddStartStepAsync(model.WorkFlowId, model.Name, model.Description)).ToActionResult(x =>
+            new StepDto(x));
+    }
+
+    [HttpPost("AddEndStep")]
+    public async Task<ActionResult<StepDto>> AddEndStep([FromBody] AddEndStepDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        return (await _manager.AddStartStepAsync(model.WorkFlowId, model.Name, model.Description)).ToActionResult(x =>
+            new StepDto(x));
+    }
+
+    [HttpPost("AddAddOnWorkerStep")]
+    public async Task<ActionResult<StepDto>> AddAddOnWorkerStep([FromBody] AddAddOnWorkerStepDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        return (await _manager.AddAddOnWorkerStepAsync(model.WorkFlowId, model.Name, model.StepType, model.ProcessType,
+                model.Description, model.AddOnWorkerDllFileName, model.AddOnWorkerClassName))
+            .ToActionResult(x => new StepDto(x));
+    }
+
+    [HttpPost("AddCartableStep")]
+    public async Task<ActionResult<StepDto>> AddCartableStep([FromBody] AddCartableStepDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        return (await _manager.AddCartableStepAsync(model.WorkFlowId, model.Name, model.StepType, model.ProcessType,
             model.Description, model.CustomUser, model.CustomRole)).ToActionResult(x => new StepDto(x));
     }
 

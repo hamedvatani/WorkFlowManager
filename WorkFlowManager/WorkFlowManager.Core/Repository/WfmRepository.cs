@@ -20,14 +20,15 @@ public class WfmRepository : IRepository
 
     public Task<WorkFlow> AddWorkFlowAsync(string name)
     {
-        var workFlow = new WorkFlow { Name = name };
+        var workFlow = new WorkFlow {Name = name};
         _context.WorkFlows.Add(workFlow);
         _context.SaveChangesAsync();
         return Task.FromResult(workFlow);
     }
 
-    public Task<Step> AddStepAsync(WorkFlow workFlow, string name, StepTypeEnum stepType,
-        ProcessTypeEnum processType, string description, string customUser, string customRole)
+    public Task<Step> AddStepAsync(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType,
+        string description, string customUser, string customRole, string addOnWorkerDllFileName,
+        string addOnWorkerClassName)
     {
         var step = new Step
         {
@@ -37,7 +38,9 @@ public class WfmRepository : IRepository
             ProcessType = processType,
             Description = description,
             CustomUser = customUser,
-            CustomRole = customRole
+            CustomRole = customRole,
+            AddOnWorkerDllFileName = addOnWorkerDllFileName,
+            AddOnWorkerClassName = addOnWorkerClassName
         };
         _context.Steps.Add(step);
         _context.SaveChangesAsync();
@@ -66,7 +69,7 @@ public class WfmRepository : IRepository
     {
         var entity = new Entity
         {
-            Json=json,
+            Json = json,
             StarterUser = starterUser,
             StarterRole = starterRole,
             Status = status
@@ -90,7 +93,8 @@ public class WfmRepository : IRepository
         return Task.CompletedTask;
     }
 
-    public Task<EntityLog> AddEntityLogAsync(Entity entity, Step? step, EntityLogTypeEnum logType, string subject, string description)
+    public Task<EntityLog> AddEntityLogAsync(Entity entity, Step? step, EntityLogTypeEnum logType, string subject,
+        string description)
     {
         var entityLog = new EntityLog
         {
@@ -104,9 +108,10 @@ public class WfmRepository : IRepository
         return Task.FromResult(entityLog);
     }
 
-    public Task<Cartable> AddCartableAsync(Entity entity, Step step, string user, string role, string possibleActions)
+    public Task<UserRoleCartable> AddUserRoleCartableAsync(Entity entity, Step step, string user, string role,
+        string possibleActions)
     {
-        var cartable = new Cartable
+        var cartable = new UserRoleCartable
         {
             Entity = entity,
             Step = step,
@@ -114,33 +119,68 @@ public class WfmRepository : IRepository
             Role = role,
             PossibleActions = possibleActions
         };
-        _context.Cartables.Add(cartable);
+        _context.UserRoleCartables.Add(cartable);
         _context.SaveChangesAsync();
         return Task.FromResult(cartable);
     }
 
-    public Task<bool> DeleteCartableAsync(int id)
+    public Task<bool> DeleteUserRoleCartableAsync(int id)
     {
-        var cartable = _context.Cartables.FirstOrDefault(c => c.Id == id);
+        var cartable = _context.UserRoleCartables.FirstOrDefault(c => c.Id == id);
         if (cartable == null)
             return Task.FromResult(false);
-        _context.Cartables.Remove(cartable);
+        _context.UserRoleCartables.Remove(cartable);
         _context.SaveChangesAsync();
         return Task.FromResult(true);
     }
 
-    public Task<Cartable?> GetCartableByIdAsync(int id)
+    public Task<UserRoleCartable?> GetUserRoleCartableByIdAsync(int id)
     {
-        return _context.Cartables.FirstOrDefaultAsync(c => c.Id == id);
+        return _context.UserRoleCartables.FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    public Task<List<Cartable>> GetUserCartablesAsync(string user)
+    public Task<List<UserRoleCartable>> GetUserCartablesAsync(string user)
     {
-        return _context.Cartables.Where(c => c.User == user).ToListAsync();
+        return _context.UserRoleCartables.Where(c => c.User == user).ToListAsync();
     }
 
-    public Task<List<Cartable>> GetRoleCartablesAsync(string role)
+    public Task<List<UserRoleCartable>> GetRoleCartablesAsync(string role)
     {
-        return _context.Cartables.Where(c => c.Role == role).ToListAsync();
+        return _context.UserRoleCartables.Where(c => c.Role == role).ToListAsync();
+    }
+
+    public Task<ServiceCartable> AddServiceCartableAsync(Entity entity, Step step, string serviceName,
+        string possibleActions)
+    {
+        var cartable = new ServiceCartable
+        {
+            Entity = entity,
+            Step = step,
+            ServiceName = serviceName,
+            PossibleActions = possibleActions
+        };
+        _context.ServiceCartables.Add(cartable);
+        _context.SaveChangesAsync();
+        return Task.FromResult(cartable);
+    }
+
+    public Task<bool> DeleteServiceCartableAsync(int id)
+    {
+        var cartable = _context.ServiceCartables.FirstOrDefault(c => c.Id == id);
+        if (cartable == null)
+            return Task.FromResult(false);
+        _context.ServiceCartables.Remove(cartable);
+        _context.SaveChangesAsync();
+        return Task.FromResult(true);
+    }
+
+    public Task<ServiceCartable?> GetServiceCartableByIdAsync(int id)
+    {
+        return _context.ServiceCartables.FirstOrDefaultAsync(c => c.Id == id);
+    }
+
+    public Task<List<ServiceCartable>> GetServiceCartablesAsync(string serviceName)
+    {
+        return _context.ServiceCartables.Where(c => c.ServiceName == serviceName).ToListAsync();
     }
 }

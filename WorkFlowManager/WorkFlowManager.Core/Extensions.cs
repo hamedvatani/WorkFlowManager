@@ -23,8 +23,8 @@ public static class Extensions
                 options.UseSqlite(config.ConnectionString);
         });
         services.AddDbContext<WorkFlowManagerContext>();
-        services.AddSingleton<IRepository, WfmRepository>();
-        services.AddSingleton<Manager>();
+        services.AddScoped<IRepository, WfmRepository>();
+        services.AddScoped<Manager>();
         return services;
     }
 

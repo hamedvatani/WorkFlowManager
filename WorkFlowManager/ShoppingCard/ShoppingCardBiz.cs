@@ -11,7 +11,6 @@ public class ShoppingCardBiz
     public ShoppingCardBiz(Client client)
     {
         _client = client;
-        _client.StartAsync(CancellationToken.None);
     }
 
     public int CreateWorkFlow()
@@ -27,52 +26,54 @@ public class ShoppingCardBiz
         var workFlow = _client.AddWorkFlow(new AddWorkFlowDto {Name = "MyWorkFlow"})
             .GetResult();
 
-        var startStep = _client.AddStep(new AddStepDto
+        var startStep = _client.AddStartStep(new AddStartStepDto
         {
             WorkFlowId = workFlow.Id,
             Name = "Start",
-            StepType = StepTypeEnum.Start,
-            ProcessType = ProcessTypeEnum.None,
             Description = "Start Step"
         }).GetResult();
-        var isExistsStep = _client.AddStep(new AddStepDto
+        var isExistsStep = _client.AddAddOnWorkerStep(new AddAddOnWorkerStepDto
         {
             WorkFlowId = workFlow.Id,
             Name = "IsExists",
             StepType = StepTypeEnum.Condition,
             ProcessType = ProcessTypeEnum.AddOnWorker,
-            Description = "Check if all items exists"
+            Description = "Check if all items exists",
+            AddOnWorkerDllFileName = "ShoppingCard.dll",
+            AddOnWorkerClassName = "ShoppingCard.Workers.IsExists"
         }).GetResult();
-        var doShoppingStep = _client.AddStep(new AddStepDto
+        var doShoppingStep = _client.AddAddOnWorkerStep(new AddAddOnWorkerStepDto
         {
             WorkFlowId = workFlow.Id,
             Name = "DoShopping",
             StepType = StepTypeEnum.Process,
             ProcessType = ProcessTypeEnum.Service,
-            Description = "Do Shopping"
+            Description = "Do Shopping",
+            AddOnWorkerDllFileName = "ShoppingCard.dll",
+            AddOnWorkerClassName = "ShoppingCard.Workers.DoShopping"
         }).GetResult();
-        var errorReportStep = _client.AddStep(new AddStepDto
+        var errorReportStep = _client.AddAddOnWorkerStep(new AddAddOnWorkerStepDto
         {
             WorkFlowId = workFlow.Id,
             Name = "ErrorReport",
             StepType = StepTypeEnum.Process,
             ProcessType = ProcessTypeEnum.Service,
-            Description = "Report Error"
+            Description = "Report Error",
+            AddOnWorkerDllFileName = "ShoppingCard.dll",
+            AddOnWorkerClassName = "ShoppingCard.Workers.ErrorReport"
         }).GetResult();
-        var getAcceptanceStep = _client.AddStep(new AddStepDto
+        var getAcceptanceStep = _client.AddCartableStep(new AddCartableStepDto
         {
             WorkFlowId = workFlow.Id,
             Name = "GetAcceptance",
             StepType = StepTypeEnum.Condition,
-            ProcessType = ProcessTypeEnum.StarterUser,
+            ProcessType = ProcessTypeEnum.StarterUserOrRole,
             Description = "Report Error"
         }).GetResult();
-        var endStep = _client.AddStep(new AddStepDto
+        var endStep = _client.AddEndStep(new AddEndStepDto
         {
             WorkFlowId = workFlow.Id,
             Name = "End",
-            StepType = StepTypeEnum.End,
-            ProcessType = ProcessTypeEnum.None,
             Description = "End Step"
         }).GetResult();
 

@@ -25,9 +25,24 @@ public class Client
         return _apiClient.CallPostApi<AddWorkFlowDto, WorkFlowDto>("AddWorkFlow", model);
     }
 
-    public MethodResult<StepDto> AddStep(AddStepDto model)
+    public MethodResult<StepDto> AddStartStep(AddStartStepDto model)
     {
-        return _apiClient.CallPostApi<AddStepDto, StepDto>("AddStep", model);
+        return _apiClient.CallPostApi<AddStartStepDto, StepDto>("AddStartStep", model);
+    }
+
+    public MethodResult<StepDto> AddEndStep(AddEndStepDto model)
+    {
+        return _apiClient.CallPostApi<AddEndStepDto, StepDto>("AddEndStep", model);
+    }
+
+    public MethodResult<StepDto> AddAddOnWorkerStep(AddAddOnWorkerStepDto model)
+    {
+        return _apiClient.CallPostApi<AddAddOnWorkerStepDto, StepDto>("AddAddOnWorkerStep", model);
+    }
+
+    public MethodResult<StepDto> AddCartableStep(AddCartableStepDto model)
+    {
+        return _apiClient.CallPostApi<AddCartableStepDto, StepDto>("AddCartableStep", model);
     }
 
     public MethodResult<FlowDto> AddFlow(AddFlowDto model)

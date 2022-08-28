@@ -13,13 +13,14 @@ public class Step : BaseModel
 
     public string Description { get; set; } = "";
     public ProcessTypeEnum ProcessType { get; set; }
+    
     public string CustomUser { get; set; } = "";
     public string CustomRole { get; set; } = "";
 
     public string AddOnWorkerDllFileName { get; set; } = "";
     public string AddOnWorkerClassName { get; set; } = "";
+
     public string ServiceName { get; set; } = "";
-    public string ServiceQueueName { get; set; } = "";
 
     [Required]
     [ForeignKey(nameof(WorkFlow))]
