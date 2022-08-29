@@ -33,6 +33,7 @@ public class IsExists : IWorker
             allNotExists |= itemExists;
         }
 
+        allNotExists = !allNotExists;
         var someExists = !allNotExists & !allExists;
 
         return new Tuple<bool, bool, bool>(allExists, allNotExists, someExists);

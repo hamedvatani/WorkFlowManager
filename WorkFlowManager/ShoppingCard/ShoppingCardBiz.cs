@@ -156,6 +156,74 @@ public class ShoppingCardBiz
         };
     }
 
+    public Card CreateNoneExistsCard()
+    {
+        return new Card
+        {
+            Items = new List<Item>
+            {
+                new Item
+                {
+                    Name = "Shoe",
+                    Quantity = 30,
+                    Stock = 20
+                },
+                new Item
+                {
+                    Name = "TShirt",
+                    Quantity = 20,
+                    Stock = 15
+                },
+                new Item
+                {
+                    Name = "Sunglasses",
+                    Quantity = 15,
+                    Stock = 10
+                },
+                new Item
+                {
+                    Name = "Watch",
+                    Quantity = 50,
+                    Stock = 30
+                }
+            }
+        };
+    }
+
+    public Card CreateSomeExistsCard()
+    {
+        return new Card
+        {
+            Items = new List<Item>
+            {
+                new Item
+                {
+                    Name = "Shoe",
+                    Quantity = 10,
+                    Stock = 20
+                },
+                new Item
+                {
+                    Name = "TShirt",
+                    Quantity = 30,
+                    Stock = 15
+                },
+                new Item
+                {
+                    Name = "Sunglasses",
+                    Quantity = 2,
+                    Stock = 10
+                },
+                new Item
+                {
+                    Name = "Watch",
+                    Quantity = 15,
+                    Stock = 30
+                }
+            }
+        };
+    }
+
     public int StartWorkFlow(string json, string starterUser, string starterRole, int workFlowId,out string error)
     {
         error = "";

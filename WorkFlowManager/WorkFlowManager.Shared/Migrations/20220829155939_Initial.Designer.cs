@@ -12,7 +12,7 @@ using WorkFlowManager.Shared.Data;
 namespace WorkFlowManager.Shared.Migrations
 {
     [DbContext(typeof(WorkFlowManagerContext))]
-    [Migration("20220829145645_Initial")]
+    [Migration("20220829155939_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,10 +81,6 @@ namespace WorkFlowManager.Shared.Migrations
 
                     b.Property<int>("LogType")
                         .HasColumnType("int");
-
-                    b.Property<string>("LogTypeDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("StepId")
                         .HasColumnType("int");

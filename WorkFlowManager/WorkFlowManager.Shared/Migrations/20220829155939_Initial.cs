@@ -110,7 +110,6 @@ namespace WorkFlowManager.Shared.Migrations
                     EntityId = table.Column<int>(type: "int", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LogType = table.Column<int>(type: "int", nullable: false),
-                    LogTypeDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StepId = table.Column<int>(type: "int", nullable: true),
                     Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false)

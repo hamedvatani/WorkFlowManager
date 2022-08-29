@@ -80,10 +80,6 @@ namespace WorkFlowManager.Shared.Migrations
                     b.Property<int>("LogType")
                         .HasColumnType("int");
 
-                    b.Property<string>("LogTypeDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("StepId")
                         .HasColumnType("int");
 

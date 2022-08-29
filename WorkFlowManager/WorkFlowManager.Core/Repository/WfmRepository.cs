@@ -105,7 +105,6 @@ public class WfmRepository : IRepository
             Entity = entity,
             Step = step,
             LogType = logType,
-            LogTypeDescription = logType.ToString(),
             Subject = subject,
             Description = description
         };
