@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WorkFlowManager.Client.Models;
+namespace WorkFlowManager.Shared.Models;
 
 public class ServiceCartable : BaseModel
 {

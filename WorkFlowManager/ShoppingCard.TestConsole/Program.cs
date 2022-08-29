@@ -1,4 +1,5 @@
-﻿using ShoppingCard;
+﻿using Newtonsoft.Json;
+using ShoppingCard;
 using WorkFlowManager.Client;
 
 var config = new ClientConfiguration
@@ -9,6 +10,10 @@ var config = new ClientConfiguration
 var biz = new ShoppingCardBiz(new Client(config, new ApiClient(config)));
 int workFlowId = biz.CreateWorkFlow();
 var allExistsCard = biz.CreateAllExistsCard();
+
+string er;
+var entityId = biz.StartWorkFlow(JsonConvert.SerializeObject(allExistsCard), "User1", "Role1", workFlowId, out er);
+Console.WriteLine(entityId > 0 ? $"EntityId : {entityId}" : $"Error : {er}");
 
 Console.WriteLine("Press <ENTER> to exit ...");
 Console.ReadLine();

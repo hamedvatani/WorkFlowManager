@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkFlowManager.Client.Models.Dto;
+namespace WorkFlowManager.Shared.Models.Dto;
 
-public class AddCartableStepDto
+public class AddCustomUserRoleCartableStepDto
 {
     [Required]
     public int WorkFlowId { get; set; }
@@ -10,13 +10,12 @@ public class AddCartableStepDto
     [Required]
     public string Name { get; set; } = "";
 
-    [Required]
     public StepTypeEnum StepType { get; set; }
+    public string Description { get; set; } = "";
 
     [Required]
-    public ProcessTypeEnum ProcessType { get; set; }
-
-    public string Description { get; set; } = "";
     public string CustomUser { get; set; } = "";
+
+    [Required]
     public string CustomRole { get; set; } = "";
 }

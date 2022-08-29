@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WorkFlowManager.Client.Models;
+namespace WorkFlowManager.Shared.Models;
 
 public class Step : BaseModel
 {
@@ -29,10 +29,10 @@ public class Step : BaseModel
     public virtual WorkFlow WorkFlow { get; set; } = null!;
 
     [InverseProperty(nameof(Flow.SourceStep))]
-    public virtual ICollection<Flow> Heads { get; set; } = null!;
+    public virtual ICollection<Flow> Heads { get; set; } = new List<Flow>();
 
     [InverseProperty(nameof(Flow.DestinationStep))]
-    public virtual ICollection<Flow> Tails { get; set; } = null!;
+    public virtual ICollection<Flow> Tails { get; set; } = new List<Flow>();
 
     public override string ToString()
     {

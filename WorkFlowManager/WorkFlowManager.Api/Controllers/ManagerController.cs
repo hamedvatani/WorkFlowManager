@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkFlowManager.Client.Models.Dto;
+using WorkFlowManager.Shared.Models.Dto;
 using WorkFlowManager.Core;
 
 namespace WorkFlowManager.Api.Controllers;
@@ -16,65 +16,82 @@ public class ManagerController : ControllerBase
     }
 
     [HttpPost("GetWorkFlows")]
-    public async Task<ActionResult<List<WorkFlowDto>>> GetWorkFlows([FromBody] GetWorkFlowsDto model)
+    public ActionResult<List<WorkFlowDto>> GetWorkFlows([FromBody] GetWorkFlowsDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return (await _manager.GetWorkFlowsAsync(model.Id, model.Name))
+        return _manager.GetWorkFlows(model.Id, model.Name)
             .ToActionResult(x => x.Select(y => new WorkFlowDto(y)).ToList());
     }
 
     [HttpPost("AddWorkFlow")]
-    public async Task<ActionResult<WorkFlowDto>> AddWorkFlow([FromBody] AddWorkFlowDto model)
+    public ActionResult<WorkFlowDto> AddWorkFlow([FromBody] AddWorkFlowDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return (await _manager.AddWorkFlowAsync(model.Name)).ToActionResult(x => new WorkFlowDto(x));
+        return _manager.AddWorkFlow(model.Name).ToActionResult(x => new WorkFlowDto(x));
     }
 
     [HttpPost("AddStartStep")]
-    public async Task<ActionResult<StepDto>> AddStartStep([FromBody] AddStartStepDto model)
+    public ActionResult<StepDto> AddStartStep([FromBody] AddStartStepDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return (await _manager.AddStartStepAsync(model.WorkFlowId, model.Name, model.Description)).ToActionResult(x =>
-            new StepDto(x));
+        return _manager.AddStartStep(model.WorkFlowId, model.Name, model.Description)
+            .ToActionResult(x => new StepDto(x));
     }
 
     [HttpPost("AddEndStep")]
-    public async Task<ActionResult<StepDto>> AddEndStep([FromBody] AddEndStepDto model)
+    public ActionResult<StepDto> AddEndStep([FromBody] AddEndStepDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return (await _manager.AddStartStepAsync(model.WorkFlowId, model.Name, model.Description)).ToActionResult(x =>
+        return _manager.AddEndStep(model.WorkFlowId, model.Name, model.Description).ToActionResult(x =>
             new StepDto(x));
     }
 
     [HttpPost("AddAddOnWorkerStep")]
-    public async Task<ActionResult<StepDto>> AddAddOnWorkerStep([FromBody] AddAddOnWorkerStepDto model)
+    public ActionResult<StepDto> AddAddOnWorkerStep([FromBody] AddAddOnWorkerStepDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return (await _manager.AddAddOnWorkerStepAsync(model.WorkFlowId, model.Name, model.StepType, model.ProcessType,
-                model.Description, model.AddOnWorkerDllFileName, model.AddOnWorkerClassName))
-            .ToActionResult(x => new StepDto(x));
+        return _manager
+            .AddAddOnWorkerStep(model.WorkFlowId, model.Name, model.StepType, model.Description,
+                model.AddOnWorkerDllFileName, model.AddOnWorkerClassName).ToActionResult(x => new StepDto(x));
     }
 
-    [HttpPost("AddCartableStep")]
-    public async Task<ActionResult<StepDto>> AddCartableStep([FromBody] AddCartableStepDto model)
+    [HttpPost("AddStarterUserRoleCartableStep")]
+    public ActionResult<StepDto> AddStarterUserRoleCartableStep([FromBody] AddStarterUserRoleCartableStepDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return (await _manager.AddCartableStepAsync(model.WorkFlowId, model.Name, model.StepType, model.ProcessType,
-            model.Description, model.CustomUser, model.CustomRole)).ToActionResult(x => new StepDto(x));
+        return _manager.AddStarterUserRoleCartableStep(model.WorkFlowId, model.Name, model.StepType, model.Description).ToActionResult(x => new StepDto(x));
+    }
+
+    [HttpPost("AddCustomUserRoleCartableStep")]
+    public ActionResult<StepDto> AddCustomUserRoleCartableStep([FromBody] AddCustomUserRoleCartableStepDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        return _manager.AddCustomUserRoleCartableStep(model.WorkFlowId, model.Name, model.StepType, model.Description,
+            model.CustomUser, model.CustomRole).ToActionResult(x => new StepDto(x));
     }
 
     [HttpPost("AddFlow")]
-    public async Task<ActionResult<FlowDto>> AddFlow([FromBody] AddFlowDto model)
+    public ActionResult<FlowDto> AddFlow([FromBody] AddFlowDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return (await _manager.AddFlowAsync(model.SourceStepId, model.DestinationStepId, model.Condition))
+        return _manager.AddFlow(model.SourceStepId, model.DestinationStepId, model.Condition)
             .ToActionResult(x => new FlowDto(x));
+    }
+
+    [HttpPost("StartWorkFlow")]
+    public ActionResult<int> StartWorkFlow([FromBody] StartWorkFlowDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        return _manager.StartWorkFlow(model.Json, model.StarterUser, model.StarterRole, model.WorkFlowId)
+            .ToActionResult();
     }
 }

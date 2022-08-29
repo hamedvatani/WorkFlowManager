@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkFlowManager.Client.Models;
+using WorkFlowManager.Shared.Models;
 
-namespace WorkFlowManager.Core.Data;
+namespace WorkFlowManager.Shared.Data;
 
 public class WorkFlowManagerContext : DbContext
 {
@@ -13,11 +13,17 @@ public class WorkFlowManagerContext : DbContext
     public DbSet<UserRoleCartable> UserRoleCartables { get; set; } = null!;
     public DbSet<ServiceCartable> ServiceCartables { get; set; } = null!;
 
-    public WorkFlowManagerContext()
+    protected WorkFlowManagerContext()
     {
     }
 
     public WorkFlowManagerContext(DbContextOptions options) : base(options)
     {
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+            optionsBuilder.UseSqlServer("Server=.;Database=WFM_Db;Trusted_Connection=True;");
     }
 }

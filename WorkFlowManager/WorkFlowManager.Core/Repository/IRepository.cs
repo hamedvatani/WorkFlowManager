@@ -1,33 +1,28 @@
-﻿using WorkFlowManager.Client.Models;
+﻿using WorkFlowManager.Shared.Models;
 
 namespace WorkFlowManager.Core.Repository;
 
 public interface IRepository
 {
-    Task<List<WorkFlow>> GetWorkFlowsAsync(int id = 0, string name = "");
-    Task<WorkFlow> AddWorkFlowAsync(string name);
+    List<WorkFlow> GetWorkFlows(int id = 0, string name = "");
+    WorkFlow AddWorkFlow(string name);
 
-    Task<Step> AddStepAsync(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType,
-        string description, string customUser, string customRole, string addOnWorkerDllFileName,
-        string addOnWorkerClassName);
+    Step AddStep(WorkFlow workFlow, string name, StepTypeEnum stepType, ProcessTypeEnum processType, string description,
+        string customUser, string customRole, string addOnWorkerDllFileName, string addOnWorkerClassName);
 
-    Task<Step?> GetStepByIdAsync(int id);
-    Task<Flow> AddFlowAsync(Step sourceStep, Step destinationStep, string condition);
-    Task<Entity> AddEntityAsync(string json, string starterUser, string starterRole, EntityStatusEnum status);
-    Task<Entity?> GetEntityByIdAsync(int id);
-    Task ChangeStatusAsync(Entity entity, Step step, EntityStatusEnum status, string description);
-
-    Task<EntityLog> AddEntityLogAsync(Entity entity, Step? step, EntityLogTypeEnum logType, string subject,
-        string description);
-
-    Task<UserRoleCartable> AddUserRoleCartableAsync(Entity entity, Step step, string user, string role, string possibleActions);
-    Task<bool> DeleteUserRoleCartableAsync(int id);
-    Task<UserRoleCartable?> GetUserRoleCartableByIdAsync(int id);
-    Task<List<UserRoleCartable>> GetUserCartablesAsync(string user);
-    Task<List<UserRoleCartable>> GetRoleCartablesAsync(string role);
-
-    Task<ServiceCartable> AddServiceCartableAsync(Entity entity, Step step, string serviceName, string possibleActions);
-    Task<bool> DeleteServiceCartableAsync(int id);
-    Task<ServiceCartable?> GetServiceCartableByIdAsync(int id);
-    Task<List<ServiceCartable>> GetServiceCartablesAsync(string serviceName);
+    Step? GetStepById(int id);
+    Flow AddFlow(Step sourceStep, Step destinationStep, string condition);
+    Entity AddEntity(string json, string starterUser, string starterRole, EntityStatusEnum status);
+    Entity? GetEntityById(int id);
+    void ChangeStatus(Entity entity, Step step, EntityStatusEnum status, string description);
+    EntityLog AddEntityLog(Entity entity, Step? step, EntityLogTypeEnum logType, string subject, string description);
+    UserRoleCartable AddUserRoleCartable(Entity entity, Step step, string user, string role, string possibleActions);
+    bool DeleteUserRoleCartable(int id);
+    UserRoleCartable? GetUserRoleCartableById(int id);
+    List<UserRoleCartable> GetUserCartables(string user);
+    List<UserRoleCartable> GetRoleCartables(string role);
+    ServiceCartable AddServiceCartable(Entity entity, Step step, string serviceName, string possibleActions);
+    bool DeleteServiceCartable(int id);
+    ServiceCartable? GetServiceCartableById(int id);
+    List<ServiceCartable> GetServiceCartables(string serviceName);
 }

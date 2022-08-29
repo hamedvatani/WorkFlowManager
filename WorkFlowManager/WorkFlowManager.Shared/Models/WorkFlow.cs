@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkFlowManager.Client.Models;
+namespace WorkFlowManager.Shared.Models;
 
 public class WorkFlow : BaseModel
 {
     [Required]
     public string Name { get; set; } = "";
 
-    public virtual ICollection<Step> Steps { get; set; } = null!;
+    public virtual ICollection<Step> Steps { get; set; } = new List<Step>();
 
     public override string ToString()
     {

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WorkFlowManager.Client.Models;
+namespace WorkFlowManager.Shared.Models;
 
 public class Flow : BaseModel
 {

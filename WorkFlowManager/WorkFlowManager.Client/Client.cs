@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using WorkFlowManager.Client.Models.Dto;
+﻿using WorkFlowManager.Shared.Models.Dto;
 
 namespace WorkFlowManager.Client;
 
@@ -40,13 +38,23 @@ public class Client
         return _apiClient.CallPostApi<AddAddOnWorkerStepDto, StepDto>("AddAddOnWorkerStep", model);
     }
 
-    public MethodResult<StepDto> AddCartableStep(AddCartableStepDto model)
+    public MethodResult<StepDto> AddStarterUserRoleCartableStep(AddStarterUserRoleCartableStepDto model)
     {
-        return _apiClient.CallPostApi<AddCartableStepDto, StepDto>("AddCartableStep", model);
+        return _apiClient.CallPostApi<AddStarterUserRoleCartableStepDto, StepDto>("AddStarterUserRoleCartableStep", model);
+    }
+
+    public MethodResult<StepDto> AddCustomUserRoleCartableStep(AddCustomUserRoleCartableStepDto model)
+    {
+        return _apiClient.CallPostApi<AddCustomUserRoleCartableStepDto, StepDto>("AddCartableStep", model);
     }
 
     public MethodResult<FlowDto> AddFlow(AddFlowDto model)
     {
         return _apiClient.CallPostApi<AddFlowDto, FlowDto>("AddFlow", model);
+    }
+
+    public MethodResult<int> StartWorkFlow(StartWorkFlowDto model)
+    {
+        return _apiClient.CallPostApi<StartWorkFlowDto, int>("StartWorkFlow", model);
     }
 }

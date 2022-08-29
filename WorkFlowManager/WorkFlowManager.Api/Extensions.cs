@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkFlowManager.Client;
+using WorkFlowManager.Shared;
 
 namespace WorkFlowManager.Api;
 

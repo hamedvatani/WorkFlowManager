@@ -1,6 +1,6 @@
 ﻿using WorkFlowManager.Client;
-using WorkFlowManager.Client.Models;
-using WorkFlowManager.Client.Models.Dto;
+using WorkFlowManager.Shared.Models;
+using WorkFlowManager.Shared.Models.Dto;
 
 namespace ShoppingCard;
 
@@ -37,7 +37,6 @@ public class ShoppingCardBiz
             WorkFlowId = workFlow.Id,
             Name = "IsExists",
             StepType = StepTypeEnum.Condition,
-            ProcessType = ProcessTypeEnum.AddOnWorker,
             Description = "Check if all items exists",
             AddOnWorkerDllFileName = "ShoppingCard.dll",
             AddOnWorkerClassName = "ShoppingCard.Workers.IsExists"
@@ -47,7 +46,6 @@ public class ShoppingCardBiz
             WorkFlowId = workFlow.Id,
             Name = "DoShopping",
             StepType = StepTypeEnum.Process,
-            ProcessType = ProcessTypeEnum.Service,
             Description = "Do Shopping",
             AddOnWorkerDllFileName = "ShoppingCard.dll",
             AddOnWorkerClassName = "ShoppingCard.Workers.DoShopping"
@@ -57,17 +55,15 @@ public class ShoppingCardBiz
             WorkFlowId = workFlow.Id,
             Name = "ErrorReport",
             StepType = StepTypeEnum.Process,
-            ProcessType = ProcessTypeEnum.Service,
             Description = "Report Error",
             AddOnWorkerDllFileName = "ShoppingCard.dll",
             AddOnWorkerClassName = "ShoppingCard.Workers.ErrorReport"
         }).GetResult();
-        var getAcceptanceStep = _client.AddCartableStep(new AddCartableStepDto
+        var getAcceptanceStep = _client.AddStarterUserRoleCartableStep(new AddStarterUserRoleCartableStepDto
         {
             WorkFlowId = workFlow.Id,
             Name = "GetAcceptance",
             StepType = StepTypeEnum.Condition,
-            ProcessType = ProcessTypeEnum.StarterUserOrRole,
             Description = "Report Error"
         }).GetResult();
         var endStep = _client.AddEndStep(new AddEndStepDto
@@ -158,5 +154,21 @@ public class ShoppingCardBiz
                 }
             }
         };
+    }
+
+    public int StartWorkFlow(string json, string starterUser, string starterRole, int workFlowId,out string error)
+    {
+        error = "";
+        var result = _client.StartWorkFlow(new StartWorkFlowDto
+        {
+            Json = json,
+            StarterUser = starterUser,
+            StarterRole = starterRole,
+            WorkFlowId = workFlowId
+        });
+        if (result.IsSuccess)
+            return result.GetResult();
+        error = result.Message;
+        return -1;
     }
 }

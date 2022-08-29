@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkFlowManager.Client.Models.Dto;
+namespace WorkFlowManager.Shared.Models.Dto;
 
 public class AddAddOnWorkerStepDto
 {
@@ -12,9 +12,6 @@ public class AddAddOnWorkerStepDto
 
     [Required]
     public StepTypeEnum StepType { get; set; }
-
-    [Required]
-    public ProcessTypeEnum ProcessType { get; set; }
 
     public string Description { get; set; } = "";
 

@@ -1,24 +1,24 @@
 ﻿using Newtonsoft.Json;
-using WorkFlowManager.Client;
-using WorkFlowManager.Client.Models;
+using WorkFlowManager.Shared;
+using WorkFlowManager.Shared.Models;
 
 namespace ShoppingCard.Workers;
 
 public class IsExists : IWorker
 {
 
-    public Task<string> RunWorkerAsync(Entity entity)
+    public string RunWorker(Entity entity)
     {
         var card = JsonConvert.DeserializeObject<Card>(entity.Json);
         if (card == null)
             throw new Exception("Invalid data!");
         var result = Check(card);
         if (result.Item1)
-            return Task.FromResult("Yes");
+            return "Yes";
         if (result.Item2)
-            return Task.FromResult("No");
+            return "No";
         if (result.Item3)
-            return Task.FromResult("Semi");
+            return "Semi";
         throw new Exception("Unknown!");
     }
 

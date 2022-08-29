@@ -1,4 +1,4 @@
-﻿namespace WorkFlowManager.Client.Models;
+﻿namespace WorkFlowManager.Shared.Models;
 
 public enum StepTypeEnum
 {

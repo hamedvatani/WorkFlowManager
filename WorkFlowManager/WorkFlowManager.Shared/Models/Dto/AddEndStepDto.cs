@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkFlowManager.Client.Models.Dto;
+namespace WorkFlowManager.Shared.Models.Dto;
 
 public class AddEndStepDto
 {

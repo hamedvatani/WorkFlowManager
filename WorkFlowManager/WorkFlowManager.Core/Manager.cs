@@ -1,5 +1,6 @@
-﻿using WorkFlowManager.Client;
-using WorkFlowManager.Client.Models;
+﻿using System.Reflection;
+using WorkFlowManager.Shared;
+using WorkFlowManager.Shared.Models;
 using WorkFlowManager.Core.Repository;
 
 namespace WorkFlowManager.Core;
@@ -16,90 +17,99 @@ public class Manager
         _repository = repository;
     }
 
-    public async Task<MethodResult<List<WorkFlow>>> GetWorkFlowsAsync(int id = 0, string name = "")
+    public MethodResult<List<WorkFlow>> GetWorkFlows(int id = 0, string name = "")
     {
-        return MethodResult<List<WorkFlow>>.Ok(await _repository.GetWorkFlowsAsync(id, name));
+        return MethodResult<List<WorkFlow>>.Ok(_repository.GetWorkFlows(id, name));
     }
 
-    public async Task<MethodResult<WorkFlow>> AddWorkFlowAsync(string name)
+    public MethodResult<WorkFlow> AddWorkFlow(string name)
     {
-        return MethodResult<WorkFlow>.Ok(await _repository.AddWorkFlowAsync(name));
+        return MethodResult<WorkFlow>.Ok(_repository.AddWorkFlow(name));
     }
 
-    public async Task<MethodResult<Step>> AddStartStepAsync(int workFlowId, string name, string description)
+    public MethodResult<Step> AddStartStep(int workFlowId, string name, string description)
     {
-        var workFlows = await _repository.GetWorkFlowsAsync(workFlowId);
+        var workFlows = _repository.GetWorkFlows(workFlowId);
         if (workFlows.Count != 1)
             return MethodResult<Step>.Error("Workflow not found!");
-        return MethodResult<Step>.Ok(await _repository.AddStepAsync(workFlows[0], name, StepTypeEnum.Start,
-            ProcessTypeEnum.None, description, "", "", "", ""));
+        return MethodResult<Step>.Ok(_repository.AddStep(workFlows[0], name, StepTypeEnum.Start, ProcessTypeEnum.None,
+            description, "", "", "", ""));
     }
 
-    public async Task<MethodResult<Step>> AddEndStepAsync(int workFlowId, string name, string description)
+    public MethodResult<Step> AddEndStep(int workFlowId, string name, string description)
     {
-        var workFlows = await _repository.GetWorkFlowsAsync(workFlowId);
+        var workFlows = _repository.GetWorkFlows(workFlowId);
         if (workFlows.Count != 1)
             return MethodResult<Step>.Error("Workflow not found!");
-        return MethodResult<Step>.Ok(await _repository.AddStepAsync(workFlows[0], name, StepTypeEnum.End,
-            ProcessTypeEnum.None, description, "", "", "", ""));
+        return MethodResult<Step>.Ok(_repository.AddStep(workFlows[0], name, StepTypeEnum.End, ProcessTypeEnum.None,
+            description, "", "", "", ""));
     }
 
-    public async Task<MethodResult<Step>> AddAddOnWorkerStepAsync(int workFlowId, string name, StepTypeEnum stepType,
-        ProcessTypeEnum processType, string description, string addOnWorkerDllFileName, string addOnWorkerClassName)
+    public MethodResult<Step> AddAddOnWorkerStep(int workFlowId, string name, StepTypeEnum stepType, string description,
+        string addOnWorkerDllFileName, string addOnWorkerClassName)
     {
         var worker = GetWorker(addOnWorkerDllFileName, addOnWorkerClassName);
         if (worker == null)
             return MethodResult<Step>.Error("Plugin not found");
-        var workFlows = await _repository.GetWorkFlowsAsync(workFlowId);
+        var workFlows = _repository.GetWorkFlows(workFlowId);
         if (workFlows.Count != 1)
             return MethodResult<Step>.Error("Workflow not found!");
-        return MethodResult<Step>.Ok(await _repository.AddStepAsync(workFlows[0], name, stepType, processType,
+        return MethodResult<Step>.Ok(_repository.AddStep(workFlows[0], name, stepType, ProcessTypeEnum.AddOnWorker,
             description, "", "", addOnWorkerDllFileName, addOnWorkerClassName));
     }
 
-    public async Task<MethodResult<Step>> AddCartableStepAsync(int workFlowId, string name, StepTypeEnum stepType,
-        ProcessTypeEnum processType, string description, string customUser, string customRole)
+    public MethodResult<Step> AddStarterUserRoleCartableStep(int workFlowId, string name, StepTypeEnum stepType,
+        string description)
     {
-        var workFlows = await _repository.GetWorkFlowsAsync(workFlowId);
+        var workFlows = _repository.GetWorkFlows(workFlowId);
         if (workFlows.Count != 1)
             return MethodResult<Step>.Error("Workflow not found!");
-        return MethodResult<Step>.Ok(await _repository.AddStepAsync(workFlows[0], name, stepType, processType,
+        return MethodResult<Step>.Ok(_repository.AddStep(workFlows[0], name, stepType,
+            ProcessTypeEnum.StarterUserOrRole, description, "", "", "", ""));
+    }
+
+    public MethodResult<Step> AddCustomUserRoleCartableStep(int workFlowId, string name, StepTypeEnum stepType,
+        string description, string customUser, string customRole)
+    {
+        var workFlows = _repository.GetWorkFlows(workFlowId);
+        if (workFlows.Count != 1)
+            return MethodResult<Step>.Error("Workflow not found!");
+        return MethodResult<Step>.Ok(_repository.AddStep(workFlows[0], name, stepType, ProcessTypeEnum.CustomUserOrRole,
             description, customUser, customRole, "", ""));
     }
 
-    public async Task<MethodResult<Flow>> AddFlowAsync(int sourceStepId, int destinationStepId, string condition)
+    public MethodResult<Flow> AddFlow(int sourceStepId, int destinationStepId, string condition)
     {
-        var sourceStep = await _repository.GetStepByIdAsync(sourceStepId);
+        var sourceStep = _repository.GetStepById(sourceStepId);
         if (sourceStep == null)
             return MethodResult<Flow>.Error("Source Step not found!");
-        var destinationStep = await _repository.GetStepByIdAsync(destinationStepId);
+        var destinationStep = _repository.GetStepById(destinationStepId);
         if (destinationStep == null)
             return MethodResult<Flow>.Error("Destination Step not found!");
-        return MethodResult<Flow>.Ok(await _repository.AddFlowAsync(sourceStep, destinationStep, condition));
+        return MethodResult<Flow>.Ok(_repository.AddFlow(sourceStep, destinationStep, condition));
     }
 
-    public async Task<MethodResult<int>> StartWorkFlow(string json, string starterUser, string starterRole,
-        int workFlowId)
+    public MethodResult<int> StartWorkFlow(string json, string starterUser, string starterRole, int workFlowId)
     {
-        var workFlows = await _repository.GetWorkFlowsAsync(workFlowId);
+        var workFlows = _repository.GetWorkFlows(workFlowId);
         if (workFlows.Count != 1)
             return MethodResult<int>.Error("WorkFlow not found!");
         var workFlow = workFlows[0];
         if (!workFlow.IsValid())
             return MethodResult<int>.Error(workFlow.GetValidationError());
 
-        var entity = await _repository.AddEntityAsync(json, starterUser, starterRole, EntityStatusEnum.Idle);
+        var entity = _repository.AddEntity(json, starterUser, starterRole, EntityStatusEnum.Idle);
 
         var startStep = workFlow.Steps.FirstOrDefault(s => s.StepType == StepTypeEnum.Start);
         if (startStep == null)
             return MethodResult<int>.Error("Workflow validation error!");
 
-        RunStepAsync(startStep, entity).Start();
+        RunStep(startStep, entity);
 
         return MethodResult<int>.Ok(entity.Id);
     }
 
-    public async Task ServiceCallBackAsync(int entityId, int stepId, bool success, string result)
+    public void ServiceCallBack(int entityId, int stepId, bool success, string result)
     {
         // var entity = await _repository.GetEntityByIdAsync(entityId);
         // if (entity == null)
@@ -126,7 +136,7 @@ public class Manager
         // await RunStepAsync(nextStep, entity);
     }
 
-    public async Task UserRoleCartableCallBackAsync(int cartableId, string result)
+    public void UserRoleCartableCallBack(int cartableId, string result)
     {
         // var cartable = await _repository.GetUserRoleCartableByIdAsync(cartableId);
         // if (cartable == null)
@@ -150,17 +160,17 @@ public class Manager
         // await RunStepAsync(nextStep, entity);
     }
 
-    private async Task RunStepAsync(Step step, Entity entity)
+    private void RunStep(Step step, Entity entity)
     {
         if (step.StepType == StepTypeEnum.End)
         {
-            await _repository.ChangeStatusAsync(entity, step, EntityStatusEnum.End, "");
-            await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.GeneralSucceed, "End", "");
+            _repository.ChangeStatus(entity, step, EntityStatusEnum.End, "");
+            _repository.AddEntityLog(entity, step, EntityLogTypeEnum.GeneralSucceed, "End", "");
             return;
         }
 
-        await _repository.ChangeStatusAsync(entity, step, EntityStatusEnum.RunningStep, "");
-        await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.StartStep, "Start Running Step", "");
+        _repository.ChangeStatus(entity, step, EntityStatusEnum.RunningStep, "");
+        _repository.AddEntityLog(entity, step, EntityLogTypeEnum.StartStep, "Start Running Step", "");
         Step? nextStep;
         switch (step.ProcessType)
         {
@@ -168,63 +178,59 @@ public class Manager
                 var worker = GetStepWorker(step);
                 if (worker == null)
                 {
-                    await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.AddOnFailed,
-                        "Worker not found!",
-                        "");
+                    _repository.AddEntityLog(entity, step, EntityLogTypeEnum.AddOnFailed, "Worker not found!", "");
                     return;
                 }
 
                 string result;
                 try
                 {
-                    result = await worker.RunWorkerAsync(entity);
+                    result = worker.RunWorker(entity);
                 }
                 catch (Exception e)
                 {
-                    await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.AddOnFailed, "Worker Exception",
+                    _repository.AddEntityLog(entity, step, EntityLogTypeEnum.AddOnFailed, "Worker Exception",
                         e.Message);
                     return;
                 }
 
-                await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.AddOnSucceed, "", "");
+                _repository.AddEntityLog(entity, step, EntityLogTypeEnum.AddOnSucceed, "AddOn Succeed",
+                    $"Result : {result}");
 
                 nextStep = GetNextStep(step, result);
                 if (nextStep == null)
                 {
-                    await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.AddOnFailed,
-                        "Next step not found!", "");
+                    _repository.AddEntityLog(entity, step, EntityLogTypeEnum.AddOnFailed, "Next step not found!", "");
                     return;
                 }
 
-                await RunStepAsync(nextStep, entity);
+                RunStep(nextStep, entity);
                 break;
             case ProcessTypeEnum.Service:
                 var serviceName = GetStepServiceName(step);
-                await _repository.ChangeStatusAsync(entity, step, EntityStatusEnum.WaitForService, serviceName);
-                await _repository.AddServiceCartableAsync(entity, step, step.ServiceName, GetStepPossibleActions(step));
+                _repository.ChangeStatus(entity, step, EntityStatusEnum.WaitForService, serviceName);
+                _repository.AddServiceCartable(entity, step, step.ServiceName, GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.StarterUserOrRole:
-                await _repository.ChangeStatusAsync(entity, step, EntityStatusEnum.WaitForCartable,
-                    "StarterUserOrRole");
-                await _repository.AddUserRoleCartableAsync(entity, step, entity.StarterUser, entity.StarterRole,
+                _repository.ChangeStatus(entity, step, EntityStatusEnum.WaitForCartable, "StarterUserOrRole");
+                _repository.AddUserRoleCartable(entity, step, entity.StarterUser, entity.StarterRole,
                     GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.CustomUserOrRole:
-                await _repository.ChangeStatusAsync(entity, step, EntityStatusEnum.WaitForCartable, "CustomUserOrRole");
-                await _repository.AddUserRoleCartableAsync(entity, step, step.CustomUser, step.CustomRole,
+                _repository.ChangeStatus(entity, step, EntityStatusEnum.WaitForCartable, "CustomUserOrRole");
+                _repository.AddUserRoleCartable(entity, step, step.CustomUser, step.CustomRole,
                     GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.None:
                 nextStep = GetNextStep(step, "");
                 if (nextStep == null)
                 {
-                    await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.GeneralFailed,
-                        "Next step not found!", "");
+                    _repository.AddEntityLog(entity, step, EntityLogTypeEnum.GeneralFailed, "Next step not found!", "");
                     return;
                 }
 
-                await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.GeneralSucceed, "", "");
-                await RunStepAsync(nextStep, entity);
+                _repository.AddEntityLog(entity, step, EntityLogTypeEnum.GeneralSucceed, "", "");
+                RunStep(nextStep, entity);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -239,12 +245,20 @@ public class Manager
 
     private IWorker? GetWorker(string addOnWorkerDllFileName, string addOnWorkerClassName)
     {
-        throw new NotImplementedException();
+        var filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins", addOnWorkerDllFileName);
+        if (!File.Exists(filename))
+            return null;
+        var assembly = Assembly.LoadFile(filename);
+        var type = assembly.GetType(addOnWorkerClassName);
+        if (type == null)
+            return null;
+        var instance = Activator.CreateInstance(type);
+        return (IWorker?) instance;
     }
 
     private IWorker? GetStepWorker(Step step)
     {
-        throw new NotImplementedException();
+        return GetWorker(step.AddOnWorkerDllFileName, step.AddOnWorkerClassName);
     }
 
     private string GetStepServiceName(Step step)

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WorkFlowManager.Client.Models;
+namespace WorkFlowManager.Shared.Models;
 
 public class Entity : BaseModel
 {
@@ -19,5 +19,5 @@ public class Entity : BaseModel
 
     public virtual Step? CurrentStep { get; set; } = null;
     
-    public virtual ICollection<EntityLog> EntityLogs { get; set; } = null!;
+    public virtual ICollection<EntityLog> EntityLogs { get; set; } = new List<EntityLog>();
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using WorkFlowManager.Client.Models;
-using WorkFlowManager.Core.Data;
+using WorkFlowManager.Shared.Models;
+using WorkFlowManager.Shared.Data;
 using WorkFlowManager.Core.Repository;
 
 namespace WorkFlowManager.Core;
@@ -17,10 +17,7 @@ public static class Extensions
         services.AddSingleton(config);
         services.AddDbContext<WorkFlowManagerContext>(options =>
         {
-            if (config.UseSqlServerDb)
-                options.UseSqlServer(config.ConnectionString);
-            else if (config.UseSqliteDb)
-                options.UseSqlite(config.ConnectionString);
+            options.UseSqlServer(config.ConnectionString);
         });
         services.AddDbContext<WorkFlowManagerContext>();
         services.AddScoped<IRepository, WfmRepository>();

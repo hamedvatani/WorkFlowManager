@@ -1,12 +1,12 @@
-﻿using WorkFlowManager.Client;
-using WorkFlowManager.Client.Models;
+﻿using WorkFlowManager.Shared;
+using WorkFlowManager.Shared.Models;
 
 namespace ShoppingCard.Workers;
 
 public class ErrorReport : IWorker
 {
-    public Task<string> RunWorkerAsync(Entity entity)
+    public string RunWorker(Entity entity)
     {
-        return Task.FromResult("");
+        return "";
     }
 }

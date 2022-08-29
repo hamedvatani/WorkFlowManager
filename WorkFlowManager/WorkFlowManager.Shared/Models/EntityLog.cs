@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WorkFlowManager.Client.Models;
+namespace WorkFlowManager.Shared.Models;
 
 public class EntityLog : BaseModel
 {
@@ -11,6 +11,7 @@ public class EntityLog : BaseModel
 
     public DateTime TimeStamp { get; set; } = DateTime.Now;
     public EntityLogTypeEnum LogType { get; set; }
+    public string LogTypeDescription { get; set; } = "";
 
     [ForeignKey(nameof(Step))]
     public int? StepId { get; set; } = null;
