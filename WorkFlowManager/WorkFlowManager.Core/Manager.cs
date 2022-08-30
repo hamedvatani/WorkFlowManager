@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Microsoft.Extensions.Hosting;
 using WorkFlowManager.Shared;
 using WorkFlowManager.Shared.Models;
 using WorkFlowManager.Core.Repository;
@@ -98,7 +99,7 @@ public class Manager
         if (!workFlow.IsValid())
             return MethodResult<int>.Error(workFlow.GetValidationError());
 
-        var entity = _repository.AddEntity(json, starterUser, starterRole, EntityStatusEnum.Idle);
+        var entity = _repository.AddEntity(json, starterUser, starterRole);
 
         var startStep = workFlow.Steps.FirstOrDefault(s => s.StepType == StepTypeEnum.Start);
         if (startStep == null)
@@ -162,15 +163,9 @@ public class Manager
 
     private void RunStep(Step step, Entity entity)
     {
-        if (step.StepType == StepTypeEnum.End)
-        {
-            _repository.ChangeStatus(entity, step, EntityStatusEnum.End, "");
-            _repository.AddEntityLog(entity, step, EntityLogTypeEnum.GeneralSucceed, "End", "");
-            return;
-        }
+        _repository.AddEntityLog(entity, step, EntityStatusEnum.StepStart,
+            step.GetDescription(entity.StarterUser, entity.StarterRole));
 
-        _repository.ChangeStatus(entity, step, EntityStatusEnum.RunningStep, "");
-        _repository.AddEntityLog(entity, step, EntityLogTypeEnum.StartStep, "Start Running Step", "");
         Step? nextStep;
         switch (step.ProcessType)
         {
@@ -178,10 +173,13 @@ public class Manager
                 var worker = GetStepWorker(step);
                 if (worker == null)
                 {
-                    _repository.AddEntityLog(entity, step, EntityLogTypeEnum.AddOnFailed, "Worker not found!", "");
+                    _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
+                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker not found!");
                     return;
                 }
 
+                _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
+                    step.GetDescription(entity.StarterUser, entity.StarterRole));
                 string result;
                 try
                 {
@@ -189,35 +187,39 @@ public class Manager
                 }
                 catch (Exception e)
                 {
-                    _repository.AddEntityLog(entity, step, EntityLogTypeEnum.AddOnFailed, "Worker Exception",
+                    _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
+                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker Exception : " +
                         e.Message);
                     return;
                 }
 
-                _repository.AddEntityLog(entity, step, EntityLogTypeEnum.AddOnSucceed, "AddOn Succeed",
-                    $"Result : {result}");
+                _repository.AddEntityLog(entity, step, EntityStatusEnum.StepSucceed,
+                    step.GetDescription(entity.StarterUser, entity.StarterRole) + $", Result : {result}");
 
                 nextStep = GetNextStep(step, result);
                 if (nextStep == null)
                 {
-                    _repository.AddEntityLog(entity, step, EntityLogTypeEnum.AddOnFailed, "Next step not found!", "");
+                    _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
+                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
                     return;
                 }
 
                 RunStep(nextStep, entity);
                 break;
             case ProcessTypeEnum.Service:
-                var serviceName = GetStepServiceName(step);
-                _repository.ChangeStatus(entity, step, EntityStatusEnum.WaitForService, serviceName);
+                _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
+                    step.GetDescription(entity.StarterUser, entity.StarterRole));
                 _repository.AddServiceCartable(entity, step, step.ServiceName, GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.StarterUserOrRole:
-                _repository.ChangeStatus(entity, step, EntityStatusEnum.WaitForCartable, "StarterUserOrRole");
+                _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
+                    step.GetDescription(entity.StarterUser, entity.StarterRole));
                 _repository.AddUserRoleCartable(entity, step, entity.StarterUser, entity.StarterRole,
                     GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.CustomUserOrRole:
-                _repository.ChangeStatus(entity, step, EntityStatusEnum.WaitForCartable, "CustomUserOrRole");
+                _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
+                    step.GetDescription(entity.StarterUser, entity.StarterRole));
                 _repository.AddUserRoleCartable(entity, step, step.CustomUser, step.CustomRole,
                     GetStepPossibleActions(step));
                 break;
@@ -225,11 +227,13 @@ public class Manager
                 nextStep = GetNextStep(step, "");
                 if (nextStep == null)
                 {
-                    _repository.AddEntityLog(entity, step, EntityLogTypeEnum.GeneralFailed, "Next step not found!", "");
+                    _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
+                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
                     return;
                 }
 
-                _repository.AddEntityLog(entity, step, EntityLogTypeEnum.GeneralSucceed, "", "");
+                _repository.AddEntityLog(entity, step, EntityStatusEnum.StepSucceed,
+                    step.GetDescription(entity.StarterUser, entity.StarterRole));
                 RunStep(nextStep, entity);
                 break;
             default:

@@ -12,10 +12,9 @@ public interface IRepository
 
     Step? GetStepById(int id);
     Flow AddFlow(Step sourceStep, Step destinationStep, string condition);
-    Entity AddEntity(string json, string starterUser, string starterRole, EntityStatusEnum status);
+    Entity AddEntity(string json, string starterUser, string starterRole);
     Entity? GetEntityById(int id);
-    void ChangeStatus(Entity entity, Step step, EntityStatusEnum status, string description);
-    EntityLog AddEntityLog(Entity entity, Step? step, EntityLogTypeEnum logType, string subject, string description);
+    EntityLog AddEntityLog(Entity entity, Step? step, EntityStatusEnum logType, string description);
     UserRoleCartable AddUserRoleCartable(Entity entity, Step step, string user, string role, string possibleActions);
     bool DeleteUserRoleCartable(int id);
     UserRoleCartable? GetUserRoleCartableById(int id);

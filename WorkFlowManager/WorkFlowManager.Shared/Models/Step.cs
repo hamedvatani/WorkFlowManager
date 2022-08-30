@@ -13,7 +13,7 @@ public class Step : BaseModel
 
     public string Description { get; set; } = "";
     public ProcessTypeEnum ProcessType { get; set; }
-    
+
     public string CustomUser { get; set; } = "";
     public string CustomRole { get; set; } = "";
 
@@ -37,5 +37,30 @@ public class Step : BaseModel
     public override string ToString()
     {
         return Name;
+    }
+
+    public string GetDescription(string starterUser = "", string starterRole = "")
+    {
+        string owner = ", Owner : ";
+        switch (ProcessType)
+        {
+            case ProcessTypeEnum.AddOnWorker:
+                owner += $"Add On Worker : {Path.GetFileName(AddOnWorkerDllFileName)}:{AddOnWorkerClassName}";
+                break;
+            case ProcessTypeEnum.Service:
+                owner += $"Service : {ServiceName}";
+                break;
+            case ProcessTypeEnum.StarterUserOrRole:
+                owner += $"Cartable User,Role : {starterUser},{starterRole}";
+                break;
+            case ProcessTypeEnum.CustomUserOrRole:
+                owner += $"Cartable User,Role : {CustomUser},{CustomRole}";
+                break;
+            default:
+                owner = "";
+                break;
+        }
+
+        return $"Name : {Name}, Type : {StepType}, Process : {ProcessType}{owner}";
     }
 }

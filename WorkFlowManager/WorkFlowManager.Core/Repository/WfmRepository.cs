@@ -70,14 +70,13 @@ public class WfmRepository : IRepository
         return flow;
     }
 
-    public Entity AddEntity(string json, string starterUser, string starterRole, EntityStatusEnum status)
+    public Entity AddEntity(string json, string starterUser, string starterRole)
     {
         var entity = new Entity
         {
             Json = json,
             StarterUser = starterUser,
-            StarterRole = starterRole,
-            Status = status
+            StarterRole = starterRole
         };
         _context.Entities.Add(entity);
         _context.SaveChanges();
@@ -89,23 +88,13 @@ public class WfmRepository : IRepository
         return _context.Entities.FirstOrDefault(e => e.Id == id);
     }
 
-    public void ChangeStatus(Entity entity, Step step, EntityStatusEnum status, string description)
-    {
-        entity.CurrentStep = step;
-        entity.Status = status;
-        entity.Description = description;
-        _context.SaveChanges();
-    }
-
-    public EntityLog AddEntityLog(Entity entity, Step? step, EntityLogTypeEnum logType, string subject,
-        string description)
+    public EntityLog AddEntityLog(Entity entity, Step? step, EntityStatusEnum logType, string description)
     {
         var entityLog = new EntityLog
         {
             Entity = entity,
             Step = step,
             LogType = logType,
-            Subject = subject,
             Description = description
         };
         _context.EntityLogs.Add(entityLog);

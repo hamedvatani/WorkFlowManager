@@ -22,6 +22,8 @@ public static class Extensions
         services.AddDbContext<WorkFlowManagerContext>();
         services.AddScoped<IRepository, WfmRepository>();
         services.AddScoped<Manager>();
+        services.AddSingleton<ManagerService>();
+        services.AddHostedService<ManagerService>();
         return services;
     }
 

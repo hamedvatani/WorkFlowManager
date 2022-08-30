@@ -10,6 +10,21 @@ namespace WorkFlowManager.Shared.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Entities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Json = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StarterUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StarterRole = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Entities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "WorkFlows",
                 columns: table => new
                 {
@@ -51,25 +66,29 @@ namespace WorkFlowManager.Shared.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Entities",
+                name: "EntityLogs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Json = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StarterUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StarterRole = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastUpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CurrentStepId = table.Column<int>(type: "int", nullable: true)
+                    TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EntityId = table.Column<int>(type: "int", nullable: false),
+                    StepId = table.Column<int>(type: "int", nullable: true),
+                    LogType = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Entities", x => x.Id);
+                    table.PrimaryKey("PK_EntityLogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Entities_Steps_CurrentStepId",
-                        column: x => x.CurrentStepId,
+                        name: "FK_EntityLogs_Entities_EntityId",
+                        column: x => x.EntityId,
+                        principalTable: "Entities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EntityLogs_Steps_StepId",
+                        column: x => x.StepId,
                         principalTable: "Steps",
                         principalColumn: "Id");
                 });
@@ -99,35 +118,6 @@ namespace WorkFlowManager.Shared.Migrations
                         principalTable: "Steps",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EntityLogs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EntityId = table.Column<int>(type: "int", nullable: false),
-                    TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LogType = table.Column<int>(type: "int", nullable: false),
-                    StepId = table.Column<int>(type: "int", nullable: true),
-                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EntityLogs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EntityLogs_Entities_EntityId",
-                        column: x => x.EntityId,
-                        principalTable: "Entities",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EntityLogs_Steps_StepId",
-                        column: x => x.StepId,
-                        principalTable: "Steps",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -188,11 +178,6 @@ namespace WorkFlowManager.Shared.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Entities_CurrentStepId",
-                table: "Entities",
-                column: "CurrentStepId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EntityLogs_EntityId",

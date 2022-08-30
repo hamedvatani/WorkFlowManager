@@ -30,19 +30,9 @@ namespace WorkFlowManager.Shared.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("CurrentStepId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Json")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LastUpdateDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("StarterRole")
                         .IsRequired()
@@ -52,12 +42,7 @@ namespace WorkFlowManager.Shared.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CurrentStepId");
 
                     b.ToTable("Entities");
                 });
@@ -77,15 +62,12 @@ namespace WorkFlowManager.Shared.Migrations
                     b.Property<int>("EntityId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LogType")
-                        .HasColumnType("int");
+                    b.Property<string>("LogType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("StepId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
@@ -265,15 +247,6 @@ namespace WorkFlowManager.Shared.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WorkFlows");
-                });
-
-            modelBuilder.Entity("WorkFlowManager.Shared.Models.Entity", b =>
-                {
-                    b.HasOne("WorkFlowManager.Shared.Models.Step", "CurrentStep")
-                        .WithMany()
-                        .HasForeignKey("CurrentStepId");
-
-                    b.Navigation("CurrentStep");
                 });
 
             modelBuilder.Entity("WorkFlowManager.Shared.Models.EntityLog", b =>

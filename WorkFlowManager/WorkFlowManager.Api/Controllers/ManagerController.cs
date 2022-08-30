@@ -9,10 +9,12 @@ namespace WorkFlowManager.Api.Controllers;
 public class ManagerController : ControllerBase
 {
     private readonly Manager _manager;
+    private readonly ManagerService _managerService;
 
-    public ManagerController(Manager manager)
+    public ManagerController(Manager manager, ManagerService managerService)
     {
         _manager = manager;
+        _managerService = managerService;
     }
 
     [HttpPost("GetWorkFlows")]
