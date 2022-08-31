@@ -89,11 +89,13 @@ public class ManagerController : ControllerBase
     }
 
     [HttpPost("StartWorkFlow")]
-    public ActionResult<int> StartWorkFlow([FromBody] StartWorkFlowDto model)
+    public ActionResult<EntityDto> StartWorkFlow([FromBody] StartWorkFlowDto model)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return _manager.StartWorkFlow(model.Json, model.StarterUser, model.StarterRole, model.WorkFlowId)
-            .ToActionResult();
+        var result = _manager.AddEntity(model.Json, model.StarterUser, model.StarterRole, model.WorkFlowId);
+        if (result.IsSuccess)
+            _managerService.StartWorkFlow(result.GetResult().Id, model.WorkFlowId);
+        return result.ToActionResult(x => new EntityDto(x));
     }
 }

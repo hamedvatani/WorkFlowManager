@@ -15,15 +15,12 @@ public static class Extensions
         configBuilder?.Invoke(config);
 
         services.AddSingleton(config);
-        services.AddDbContext<WorkFlowManagerContext>(options =>
-        {
-            options.UseSqlServer(config.ConnectionString);
-        });
-        services.AddDbContext<WorkFlowManagerContext>();
+        services.AddDbContext<WorkFlowManagerContext>(options => { options.UseSqlServer(config.ConnectionString); });
         services.AddScoped<IRepository, WfmRepository>();
         services.AddScoped<Manager>();
         services.AddSingleton<ManagerService>();
-        services.AddHostedService<ManagerService>();
+        services.AddHostedService(serviceProvider => serviceProvider.GetService<ManagerService>() ?? null!);
+        services.AddHostedService<TestService>();
         return services;
     }
 

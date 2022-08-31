@@ -235,7 +235,7 @@ public class ShoppingCardBiz
             WorkFlowId = workFlowId
         });
         if (result.IsSuccess)
-            return result.GetResult();
+            return result.GetResult().Id;
         error = result.Message;
         return -1;
     }

@@ -53,8 +53,8 @@ public class Client
         return _apiClient.CallPostApi<AddFlowDto, FlowDto>("AddFlow", model);
     }
 
-    public MethodResult<int> StartWorkFlow(StartWorkFlowDto model)
+    public MethodResult<EntityDto> StartWorkFlow(StartWorkFlowDto model)
     {
-        return _apiClient.CallPostApi<StartWorkFlowDto, int>("StartWorkFlow", model);
+        return _apiClient.CallPostApi<StartWorkFlowDto, EntityDto>("StartWorkFlow", model);
     }
 }

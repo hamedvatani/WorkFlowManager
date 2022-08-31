@@ -54,3 +54,39 @@ public class MethodResult<T>
         return retVal;
     }
 }
+
+public class MethodResult
+{
+    public bool IsSuccess { get; set; }
+    public bool IsTimeout { get; set; }
+    public string Message { get; set; } = "";
+    public DateTime TimeStamp { get; set; } = DateTime.Now;
+
+    public static MethodResult Ok()
+    {
+        return new MethodResult { IsSuccess = true };
+    }
+
+    public static MethodResult Ok(string message)
+    {
+        return new MethodResult { IsSuccess = true, Message = message };
+    }
+
+    public static MethodResult Error(string message)
+    {
+        return new MethodResult { Message = message };
+    }
+
+    public static MethodResult Timeout()
+    {
+        return new MethodResult { IsTimeout = true };
+    }
+
+    public override string ToString()
+    {
+        var retVal = IsSuccess ? "Ok." : "Fail!";
+        if (IsTimeout)
+            retVal += " Timeout!";
+        return retVal;
+    }
+}

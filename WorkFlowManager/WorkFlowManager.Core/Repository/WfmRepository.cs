@@ -88,7 +88,7 @@ public class WfmRepository : IRepository
         return _context.Entities.FirstOrDefault(e => e.Id == id);
     }
 
-    public EntityLog AddEntityLog(Entity entity, Step? step, EntityStatusEnum logType, string description)
+    public EntityLog AddEntityLog(Entity entity, Step step, EntityStatusEnum logType, string description)
     {
         var entityLog = new EntityLog
         {

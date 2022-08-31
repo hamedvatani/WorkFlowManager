@@ -90,25 +90,30 @@ public class Manager
         return MethodResult<Flow>.Ok(_repository.AddFlow(sourceStep, destinationStep, condition));
     }
 
-    public MethodResult<int> StartWorkFlow(string json, string starterUser, string starterRole, int workFlowId)
+    public MethodResult<Entity> AddEntity(string json, string starterUser, string starterRole, int workFlowId)
     {
-        var workFlows = _repository.GetWorkFlows(workFlowId);
-        if (workFlows.Count != 1)
-            return MethodResult<int>.Error("WorkFlow not found!");
-        var workFlow = workFlows[0];
-        if (!workFlow.IsValid())
-            return MethodResult<int>.Error(workFlow.GetValidationError());
-
-        var entity = _repository.AddEntity(json, starterUser, starterRole);
-
-        var startStep = workFlow.Steps.FirstOrDefault(s => s.StepType == StepTypeEnum.Start);
-        if (startStep == null)
-            return MethodResult<int>.Error("Workflow validation error!");
-
-        RunStep(startStep, entity);
-
-        return MethodResult<int>.Ok(entity.Id);
+        return MethodResult<Entity>.Ok(_repository.AddEntity(json, starterUser, starterRole));
     }
+
+    // public MethodResult<int> StartWorkFlow(string json, string starterUser, string starterRole, int workFlowId)
+    // {
+    //     var workFlows = _repository.GetWorkFlows(workFlowId);
+    //     if (workFlows.Count != 1)
+    //         return MethodResult<int>.Error("WorkFlow not found!");
+    //     var workFlow = workFlows[0];
+    //     if (!workFlow.IsValid())
+    //         return MethodResult<int>.Error(workFlow.GetValidationError());
+    //
+    //     var entity = _repository.AddEntity(json, starterUser, starterRole);
+    //
+    //     var startStep = workFlow.Steps.FirstOrDefault(s => s.StepType == StepTypeEnum.Start);
+    //     if (startStep == null)
+    //         return MethodResult<int>.Error("Workflow validation error!");
+    //
+    //     RunStep(startStep, entity);
+    //
+    //     return MethodResult<int>.Ok(entity.Id);
+    // }
 
     public void ServiceCallBack(int entityId, int stepId, bool success, string result)
     {
@@ -161,85 +166,85 @@ public class Manager
         // await RunStepAsync(nextStep, entity);
     }
 
-    private void RunStep(Step step, Entity entity)
-    {
-        _repository.AddEntityLog(entity, step, EntityStatusEnum.StepStart,
-            step.GetDescription(entity.StarterUser, entity.StarterRole));
-
-        Step? nextStep;
-        switch (step.ProcessType)
-        {
-            case ProcessTypeEnum.AddOnWorker:
-                var worker = GetStepWorker(step);
-                if (worker == null)
-                {
-                    _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
-                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker not found!");
-                    return;
-                }
-
-                _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
-                string result;
-                try
-                {
-                    result = worker.RunWorker(entity);
-                }
-                catch (Exception e)
-                {
-                    _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
-                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker Exception : " +
-                        e.Message);
-                    return;
-                }
-
-                _repository.AddEntityLog(entity, step, EntityStatusEnum.StepSucceed,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole) + $", Result : {result}");
-
-                nextStep = GetNextStep(step, result);
-                if (nextStep == null)
-                {
-                    _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
-                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
-                    return;
-                }
-
-                RunStep(nextStep, entity);
-                break;
-            case ProcessTypeEnum.Service:
-                _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
-                _repository.AddServiceCartable(entity, step, step.ServiceName, GetStepPossibleActions(step));
-                break;
-            case ProcessTypeEnum.StarterUserOrRole:
-                _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
-                _repository.AddUserRoleCartable(entity, step, entity.StarterUser, entity.StarterRole,
-                    GetStepPossibleActions(step));
-                break;
-            case ProcessTypeEnum.CustomUserOrRole:
-                _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
-                _repository.AddUserRoleCartable(entity, step, step.CustomUser, step.CustomRole,
-                    GetStepPossibleActions(step));
-                break;
-            case ProcessTypeEnum.None:
-                nextStep = GetNextStep(step, "");
-                if (nextStep == null)
-                {
-                    _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
-                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
-                    return;
-                }
-
-                _repository.AddEntityLog(entity, step, EntityStatusEnum.StepSucceed,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
-                RunStep(nextStep, entity);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
+    // private void RunStep(Step step, Entity entity)
+    // {
+    //     _repository.AddEntityLog(entity, step, EntityStatusEnum.StepStart,
+    //         step.GetDescription(entity.StarterUser, entity.StarterRole));
+    //
+    //     Step? nextStep;
+    //     switch (step.ProcessType)
+    //     {
+    //         case ProcessTypeEnum.AddOnWorker:
+    //             var worker = GetStepWorker(step);
+    //             if (worker == null)
+    //             {
+    //                 _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
+    //                     step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker not found!");
+    //                 return;
+    //             }
+    //
+    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
+    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
+    //             string result;
+    //             try
+    //             {
+    //                 result = worker.RunWorker(entity);
+    //             }
+    //             catch (Exception e)
+    //             {
+    //                 _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
+    //                     step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker Exception : " +
+    //                     e.Message);
+    //                 return;
+    //             }
+    //
+    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.StepSucceed,
+    //                 step.GetDescription(entity.StarterUser, entity.StarterRole) + $", Result : {result}");
+    //
+    //             nextStep = GetNextStep(step, result);
+    //             if (nextStep == null)
+    //             {
+    //                 _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
+    //                     step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
+    //                 return;
+    //             }
+    //
+    //             RunStep(nextStep, entity);
+    //             break;
+    //         case ProcessTypeEnum.Service:
+    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
+    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
+    //             _repository.AddServiceCartable(entity, step, step.ServiceName, GetStepPossibleActions(step));
+    //             break;
+    //         case ProcessTypeEnum.StarterUserOrRole:
+    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
+    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
+    //             _repository.AddUserRoleCartable(entity, step, entity.StarterUser, entity.StarterRole,
+    //                 GetStepPossibleActions(step));
+    //             break;
+    //         case ProcessTypeEnum.CustomUserOrRole:
+    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
+    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
+    //             _repository.AddUserRoleCartable(entity, step, step.CustomUser, step.CustomRole,
+    //                 GetStepPossibleActions(step));
+    //             break;
+    //         case ProcessTypeEnum.None:
+    //             nextStep = GetNextStep(step, "");
+    //             if (nextStep == null)
+    //             {
+    //                 _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
+    //                     step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
+    //                 return;
+    //             }
+    //
+    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.StepSucceed,
+    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
+    //             RunStep(nextStep, entity);
+    //             break;
+    //         default:
+    //             throw new ArgumentOutOfRangeException();
+    //     }
+    // }
 
     private static Step? GetNextStep(Step step, string condition)
     {
