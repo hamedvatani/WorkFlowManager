@@ -13,8 +13,9 @@ public interface IRepository
     Step? GetStepById(int id);
     Flow AddFlow(Step sourceStep, Step destinationStep, string condition);
     Entity AddEntity(string json, string starterUser, string starterRole);
+    void ChangeEntityStatus(Entity entity, EntityStatusEnum status);
     Entity? GetEntityById(int id);
-    EntityLog AddEntityLog(Entity entity, Step step, EntityStatusEnum logType, string description);
+    EntityLog AddEntityLog(Entity entity, Step step, EntityLogStatusEnum logType, string description);
     UserRoleCartable AddUserRoleCartable(Entity entity, Step step, string user, string role, string possibleActions);
     bool DeleteUserRoleCartable(int id);
     UserRoleCartable? GetUserRoleCartableById(int id);

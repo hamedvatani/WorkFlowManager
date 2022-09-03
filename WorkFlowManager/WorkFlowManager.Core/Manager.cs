@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.Hosting;
-using WorkFlowManager.Shared;
+﻿using WorkFlowManager.Shared;
 using WorkFlowManager.Shared.Models;
 using WorkFlowManager.Core.Repository;
 
@@ -49,7 +47,7 @@ public class Manager
     public MethodResult<Step> AddAddOnWorkerStep(int workFlowId, string name, StepTypeEnum stepType, string description,
         string addOnWorkerDllFileName, string addOnWorkerClassName)
     {
-        var worker = GetWorker(addOnWorkerDllFileName, addOnWorkerClassName);
+        var worker = Extensions.GetWorker(addOnWorkerDllFileName, addOnWorkerClassName);
         if (worker == null)
             return MethodResult<Step>.Error("Plugin not found");
         var workFlows = _repository.GetWorkFlows(workFlowId);
@@ -95,189 +93,13 @@ public class Manager
         return MethodResult<Entity>.Ok(_repository.AddEntity(json, starterUser, starterRole));
     }
 
-    // public MethodResult<int> StartWorkFlow(string json, string starterUser, string starterRole, int workFlowId)
-    // {
-    //     var workFlows = _repository.GetWorkFlows(workFlowId);
-    //     if (workFlows.Count != 1)
-    //         return MethodResult<int>.Error("WorkFlow not found!");
-    //     var workFlow = workFlows[0];
-    //     if (!workFlow.IsValid())
-    //         return MethodResult<int>.Error(workFlow.GetValidationError());
-    //
-    //     var entity = _repository.AddEntity(json, starterUser, starterRole);
-    //
-    //     var startStep = workFlow.Steps.FirstOrDefault(s => s.StepType == StepTypeEnum.Start);
-    //     if (startStep == null)
-    //         return MethodResult<int>.Error("Workflow validation error!");
-    //
-    //     RunStep(startStep, entity);
-    //
-    //     return MethodResult<int>.Ok(entity.Id);
-    // }
-
-    public void ServiceCallBack(int entityId, int stepId, bool success, string result)
+    public MethodResult<List<UserRoleCartable>> GetUserCartables(string user)
     {
-        // var entity = await _repository.GetEntityByIdAsync(entityId);
-        // if (entity == null)
-        //     return;
-        // var step = await _repository.GetStepByIdAsync(stepId);
-        // if (step == null)
-        //     return;
-        // if (!success)
-        // {
-        //     await _repository.ChangeStatusAsync(entity, step, EntityStatusEnum.FailInStep, result);
-        //     await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.ServiceFailed, "", result);
-        //     return;
-        // }
-        //
-        // await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.ServiceSucceed, "", result);
-        // var nextStep = GetNextStep(step, result);
-        // if (nextStep == null)
-        // {
-        //     await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.ServiceFailed, "Next step not found!",
-        //         "");
-        //     return;
-        // }
-        //
-        // await RunStepAsync(nextStep, entity);
+        return MethodResult<List<UserRoleCartable>>.Ok(_repository.GetUserCartables(user));
     }
 
-    public void UserRoleCartableCallBack(int cartableId, string result)
+    public MethodResult<List<UserRoleCartable>> GetRoleCartables(string role)
     {
-        // var cartable = await _repository.GetUserRoleCartableByIdAsync(cartableId);
-        // if (cartable == null)
-        //     return;
-        // var entity = await _repository.GetEntityByIdAsync(cartable.EntityId);
-        // if (entity == null)
-        //     return;
-        // var step = await _repository.GetStepByIdAsync(cartable.StepId);
-        // if (step == null)
-        //     return;
-        //
-        // await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.CartableSucceed, "", result);
-        // var nextStep = GetNextStep(step, result);
-        // if (nextStep == null)
-        // {
-        //     await _repository.AddEntityLogAsync(entity, step, EntityLogTypeEnum.ServiceFailed, "Next step not found!",
-        //         "");
-        //     return;
-        // }
-        //
-        // await RunStepAsync(nextStep, entity);
-    }
-
-    // private void RunStep(Step step, Entity entity)
-    // {
-    //     _repository.AddEntityLog(entity, step, EntityStatusEnum.StepStart,
-    //         step.GetDescription(entity.StarterUser, entity.StarterRole));
-    //
-    //     Step? nextStep;
-    //     switch (step.ProcessType)
-    //     {
-    //         case ProcessTypeEnum.AddOnWorker:
-    //             var worker = GetStepWorker(step);
-    //             if (worker == null)
-    //             {
-    //                 _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
-    //                     step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker not found!");
-    //                 return;
-    //             }
-    //
-    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
-    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
-    //             string result;
-    //             try
-    //             {
-    //                 result = worker.RunWorker(entity);
-    //             }
-    //             catch (Exception e)
-    //             {
-    //                 _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
-    //                     step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker Exception : " +
-    //                     e.Message);
-    //                 return;
-    //             }
-    //
-    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.StepSucceed,
-    //                 step.GetDescription(entity.StarterUser, entity.StarterRole) + $", Result : {result}");
-    //
-    //             nextStep = GetNextStep(step, result);
-    //             if (nextStep == null)
-    //             {
-    //                 _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
-    //                     step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
-    //                 return;
-    //             }
-    //
-    //             RunStep(nextStep, entity);
-    //             break;
-    //         case ProcessTypeEnum.Service:
-    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
-    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
-    //             _repository.AddServiceCartable(entity, step, step.ServiceName, GetStepPossibleActions(step));
-    //             break;
-    //         case ProcessTypeEnum.StarterUserOrRole:
-    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
-    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
-    //             _repository.AddUserRoleCartable(entity, step, entity.StarterUser, entity.StarterRole,
-    //                 GetStepPossibleActions(step));
-    //             break;
-    //         case ProcessTypeEnum.CustomUserOrRole:
-    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.WaitForProcess,
-    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
-    //             _repository.AddUserRoleCartable(entity, step, step.CustomUser, step.CustomRole,
-    //                 GetStepPossibleActions(step));
-    //             break;
-    //         case ProcessTypeEnum.None:
-    //             nextStep = GetNextStep(step, "");
-    //             if (nextStep == null)
-    //             {
-    //                 _repository.AddEntityLog(entity, step, EntityStatusEnum.StepFailed,
-    //                     step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
-    //                 return;
-    //             }
-    //
-    //             _repository.AddEntityLog(entity, step, EntityStatusEnum.StepSucceed,
-    //                 step.GetDescription(entity.StarterUser, entity.StarterRole));
-    //             RunStep(nextStep, entity);
-    //             break;
-    //         default:
-    //             throw new ArgumentOutOfRangeException();
-    //     }
-    // }
-
-    private static Step? GetNextStep(Step step, string condition)
-    {
-        var flow = step.Heads.FirstOrDefault(f => f.Condition == condition);
-        return flow?.DestinationStep;
-    }
-
-    private IWorker? GetWorker(string addOnWorkerDllFileName, string addOnWorkerClassName)
-    {
-        var filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins", addOnWorkerDllFileName);
-        if (!File.Exists(filename))
-            return null;
-        var assembly = Assembly.LoadFile(filename);
-        var type = assembly.GetType(addOnWorkerClassName);
-        if (type == null)
-            return null;
-        var instance = Activator.CreateInstance(type);
-        return (IWorker?) instance;
-    }
-
-    private IWorker? GetStepWorker(Step step)
-    {
-        return GetWorker(step.AddOnWorkerDllFileName, step.AddOnWorkerClassName);
-    }
-
-    private string GetStepServiceName(Step step)
-    {
-        throw new NotImplementedException();
-    }
-
-    private string GetStepPossibleActions(Step step)
-    {
-        var actions = step.Heads.Select(x => x.Condition).Distinct().ToList();
-        return actions.Count == 0 ? "" : string.Join(";", actions);
+        return MethodResult<List<UserRoleCartable>>.Ok(_repository.GetUserCartables(role));
     }
 }

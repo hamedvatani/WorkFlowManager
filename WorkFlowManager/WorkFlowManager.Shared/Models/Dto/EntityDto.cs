@@ -3,6 +3,7 @@
 public sealed class EntityDto
 {
     public int Id { get; set; }
+    public EntityStatusEnum Status { get; set; }
     public string Json { get; set; } = "";
     public string StarterUser { get; set; } = "";
     public string StarterRole { get; set; } = "";
@@ -15,6 +16,7 @@ public sealed class EntityDto
     public EntityDto(Entity entity)
     {
         Id = entity.Id;
+        Status = entity.Status;
         Json = entity.Json;
         StarterUser = entity.StarterUser;
         StarterRole = entity.StarterRole;
@@ -26,6 +28,7 @@ public sealed class EntityDto
         return new Entity
         {
             Id = Id,
+            Status = Status,
             Json = Json,
             StarterUser = StarterUser,
             StarterRole = StarterRole,

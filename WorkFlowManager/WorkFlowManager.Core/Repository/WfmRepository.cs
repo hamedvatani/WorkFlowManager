@@ -74,6 +74,7 @@ public class WfmRepository : IRepository
     {
         var entity = new Entity
         {
+            Status = EntityStatusEnum.Idle,
             Json = json,
             StarterUser = starterUser,
             StarterRole = starterRole
@@ -83,12 +84,18 @@ public class WfmRepository : IRepository
         return entity;
     }
 
+    public void ChangeEntityStatus(Entity entity, EntityStatusEnum status)
+    {
+        entity.Status = status;
+        _context.SaveChanges();
+    }
+
     public Entity? GetEntityById(int id)
     {
         return _context.Entities.FirstOrDefault(e => e.Id == id);
     }
 
-    public EntityLog AddEntityLog(Entity entity, Step step, EntityStatusEnum logType, string description)
+    public EntityLog AddEntityLog(Entity entity, Step step, EntityLogStatusEnum logType, string description)
     {
         var entityLog = new EntityLog
         {

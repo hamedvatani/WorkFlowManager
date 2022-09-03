@@ -12,7 +12,7 @@ using WorkFlowManager.Shared.Data;
 namespace WorkFlowManager.Shared.Migrations
 {
     [DbContext(typeof(WorkFlowManagerContext))]
-    [Migration("20220830103030_Initial")]
+    [Migration("20220903101819_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,10 @@ namespace WorkFlowManager.Shared.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Entities");
@@ -68,7 +72,7 @@ namespace WorkFlowManager.Shared.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("StepId")
+                    b.Property<int>("StepId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("TimeStamp")
@@ -261,7 +265,9 @@ namespace WorkFlowManager.Shared.Migrations
 
                     b.HasOne("WorkFlowManager.Shared.Models.Step", "Step")
                         .WithMany()
-                        .HasForeignKey("StepId");
+                        .HasForeignKey("StepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Entity");
 

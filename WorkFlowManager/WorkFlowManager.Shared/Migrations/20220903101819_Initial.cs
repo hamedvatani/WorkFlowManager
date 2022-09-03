@@ -15,6 +15,7 @@ namespace WorkFlowManager.Shared.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     Json = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StarterUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StarterRole = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -73,7 +74,7 @@ namespace WorkFlowManager.Shared.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EntityId = table.Column<int>(type: "int", nullable: false),
-                    StepId = table.Column<int>(type: "int", nullable: true),
+                    StepId = table.Column<int>(type: "int", nullable: false),
                     LogType = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -90,7 +91,8 @@ namespace WorkFlowManager.Shared.Migrations
                         name: "FK_EntityLogs_Steps_StepId",
                         column: x => x.StepId,
                         principalTable: "Steps",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

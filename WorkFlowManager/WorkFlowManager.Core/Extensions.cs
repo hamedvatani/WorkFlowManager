@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using WorkFlowManager.Shared.Models;
 using WorkFlowManager.Shared.Data;
 using WorkFlowManager.Core.Repository;
+using WorkFlowManager.Shared;
 
 namespace WorkFlowManager.Core;
 
@@ -20,7 +22,6 @@ public static class Extensions
         services.AddScoped<Manager>();
         services.AddSingleton<ManagerService>();
         services.AddHostedService(serviceProvider => serviceProvider.GetService<ManagerService>() ?? null!);
-        services.AddHostedService<TestService>();
         return services;
     }
 
@@ -75,5 +76,18 @@ public static class Extensions
     public static bool IsValid(this WorkFlow workFlow)
     {
         return workFlow.GetValidationError() == "";
+    }
+
+    public static IWorker? GetWorker(string addOnWorkerDllFileName, string addOnWorkerClassName)
+    {
+        var filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins", addOnWorkerDllFileName);
+        if (!File.Exists(filename))
+            return null;
+        var assembly = Assembly.LoadFile(filename);
+        var type = assembly.GetType(addOnWorkerClassName);
+        if (type == null)
+            return null;
+        var instance = Activator.CreateInstance(type);
+        return (IWorker?)instance;
     }
 }

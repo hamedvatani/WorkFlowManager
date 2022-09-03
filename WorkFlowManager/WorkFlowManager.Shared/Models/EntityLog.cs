@@ -15,7 +15,7 @@ public class EntityLog : BaseModel
     public int StepId { get; set; }
 
     [Column(TypeName = "nvarchar(50)")]
-    public EntityStatusEnum LogType { get; set; }
+    public EntityLogStatusEnum LogType { get; set; }
 
     public string Description { get; set; } = "";
     public virtual Entity Entity { get; set; } = null!;

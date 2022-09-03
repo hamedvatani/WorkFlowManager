@@ -2,8 +2,7 @@
 
 public enum EntityStatusEnum
 {
-    StepStart,
-    WaitForProcess,
-    StepSucceed,
-    StepFailed
+    Idle,
+    Running,
+    Done
 }

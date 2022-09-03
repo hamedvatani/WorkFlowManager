@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WorkFlowManager.Shared.Models;
 
 public class Entity : BaseModel
 {
+    [Column(TypeName = "nvarchar(50)")]
+    public EntityStatusEnum Status { get; set; }
     [Required]
     public string Json { get; set; } = "";
 

@@ -6,7 +6,7 @@ public sealed class EntityLogDto
     public DateTime TimeStamp { get; set; } = DateTime.Now;
     public int EntityId { get; set; }
     public int StepId { get; set; }
-    public EntityStatusEnum LogType { get; set; }
+    public EntityLogStatusEnum LogType { get; set; }
     public string Description { get; set; } = "";
 
     public EntityLogDto()
