@@ -16,13 +16,10 @@ public interface IRepository
     void ChangeEntityStatus(Entity entity, EntityStatusEnum status);
     Entity? GetEntityById(int id);
     EntityLog AddEntityLog(Entity entity, Step step, EntityLogStatusEnum logType, string description);
-    UserRoleCartable AddUserRoleCartable(Entity entity, Step step, string user, string role, string possibleActions);
-    bool DeleteUserRoleCartable(int id);
-    UserRoleCartable? GetUserRoleCartableById(int id);
-    List<UserRoleCartable> GetUserCartables(string user);
-    List<UserRoleCartable> GetRoleCartables(string role);
-    ServiceCartable AddServiceCartable(Entity entity, Step step, string serviceName, string possibleActions);
-    bool DeleteServiceCartable(int id);
-    ServiceCartable? GetServiceCartableById(int id);
-    List<ServiceCartable> GetServiceCartables(string serviceName);
+    CartableItem AddCartableItem(Entity entity, Step step, string user, string role, string serviceName, string possibleActions);
+    bool DeleteCartableItem(int id);
+    CartableItem? GetCartableItemById(int id);
+    List<CartableItem> GetUserCartable(string user);
+    List<CartableItem> GetRoleCartable(string role);
+    List<CartableItem> GetServiceCartable(string serviceName);
 }

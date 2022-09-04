@@ -64,7 +64,7 @@ public class ShoppingCardBiz
             WorkFlowId = workFlow.Id,
             Name = "GetAcceptance",
             StepType = StepTypeEnum.Condition,
-            Description = "Report Error"
+            Description = "Get User Acceptance"
         }).GetResult();
         var endStep = _client.AddEndStep(new AddEndStepDto
         {

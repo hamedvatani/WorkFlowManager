@@ -93,13 +93,18 @@ public class Manager
         return MethodResult<Entity>.Ok(_repository.AddEntity(json, starterUser, starterRole));
     }
 
-    public MethodResult<List<UserRoleCartable>> GetUserCartables(string user)
+    public MethodResult<List<CartableItem>> GetUserCartable(string user)
     {
-        return MethodResult<List<UserRoleCartable>>.Ok(_repository.GetUserCartables(user));
+        return MethodResult<List<CartableItem>>.Ok(_repository.GetUserCartable(user));
     }
 
-    public MethodResult<List<UserRoleCartable>> GetRoleCartables(string role)
+    public MethodResult<List<CartableItem>> GetRoleCartable(string role)
     {
-        return MethodResult<List<UserRoleCartable>>.Ok(_repository.GetUserCartables(role));
+        return MethodResult<List<CartableItem>>.Ok(_repository.GetRoleCartable(role));
+    }
+
+    public MethodResult<List<CartableItem>> GetServiceCartable(string serviceName)
+    {
+        return MethodResult<List<CartableItem>>.Ok(_repository.GetServiceCartable(serviceName));
     }
 }

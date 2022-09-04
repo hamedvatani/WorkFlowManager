@@ -22,6 +22,48 @@ namespace WorkFlowManager.Shared.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("WorkFlowManager.Shared.Models.CartableItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PossibleActions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StepId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("User")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntityId");
+
+                    b.HasIndex("StepId");
+
+                    b.ToTable("CartableItems");
+                });
+
             modelBuilder.Entity("WorkFlowManager.Shared.Models.Entity", b =>
                 {
                     b.Property<int>("Id")
@@ -112,40 +154,6 @@ namespace WorkFlowManager.Shared.Migrations
                     b.ToTable("Flows");
                 });
 
-            modelBuilder.Entity("WorkFlowManager.Shared.Models.ServiceCartable", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("EntityId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PossibleActions")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ServiceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StepId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EntityId");
-
-                    b.HasIndex("StepId");
-
-                    b.ToTable("ServiceCartables");
-                });
-
             modelBuilder.Entity("WorkFlowManager.Shared.Models.Step", b =>
                 {
                     b.Property<int>("Id")
@@ -198,44 +206,6 @@ namespace WorkFlowManager.Shared.Migrations
                     b.ToTable("Steps");
                 });
 
-            modelBuilder.Entity("WorkFlowManager.Shared.Models.UserRoleCartable", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("EntityId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PossibleActions")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StepId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("User")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EntityId");
-
-                    b.HasIndex("StepId");
-
-                    b.ToTable("UserRoleCartables");
-                });
-
             modelBuilder.Entity("WorkFlowManager.Shared.Models.WorkFlow", b =>
                 {
                     b.Property<int>("Id")
@@ -251,6 +221,25 @@ namespace WorkFlowManager.Shared.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WorkFlows");
+                });
+
+            modelBuilder.Entity("WorkFlowManager.Shared.Models.CartableItem", b =>
+                {
+                    b.HasOne("WorkFlowManager.Shared.Models.Entity", "Entity")
+                        .WithMany()
+                        .HasForeignKey("EntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkFlowManager.Shared.Models.Step", "Step")
+                        .WithMany()
+                        .HasForeignKey("StepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Entity");
+
+                    b.Navigation("Step");
                 });
 
             modelBuilder.Entity("WorkFlowManager.Shared.Models.EntityLog", b =>
@@ -291,25 +280,6 @@ namespace WorkFlowManager.Shared.Migrations
                     b.Navigation("SourceStep");
                 });
 
-            modelBuilder.Entity("WorkFlowManager.Shared.Models.ServiceCartable", b =>
-                {
-                    b.HasOne("WorkFlowManager.Shared.Models.Entity", "Entity")
-                        .WithMany()
-                        .HasForeignKey("EntityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WorkFlowManager.Shared.Models.Step", "Step")
-                        .WithMany()
-                        .HasForeignKey("StepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Entity");
-
-                    b.Navigation("Step");
-                });
-
             modelBuilder.Entity("WorkFlowManager.Shared.Models.Step", b =>
                 {
                     b.HasOne("WorkFlowManager.Shared.Models.WorkFlow", "WorkFlow")
@@ -319,25 +289,6 @@ namespace WorkFlowManager.Shared.Migrations
                         .IsRequired();
 
                     b.Navigation("WorkFlow");
-                });
-
-            modelBuilder.Entity("WorkFlowManager.Shared.Models.UserRoleCartable", b =>
-                {
-                    b.HasOne("WorkFlowManager.Shared.Models.Entity", "Entity")
-                        .WithMany()
-                        .HasForeignKey("EntityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WorkFlowManager.Shared.Models.Step", "Step")
-                        .WithMany()
-                        .HasForeignKey("StepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Entity");
-
-                    b.Navigation("Step");
                 });
 
             modelBuilder.Entity("WorkFlowManager.Shared.Models.Entity", b =>

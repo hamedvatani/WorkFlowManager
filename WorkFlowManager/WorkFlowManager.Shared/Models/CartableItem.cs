@@ -2,7 +2,7 @@
 
 namespace WorkFlowManager.Shared.Models;
 
-public class ServiceCartable : BaseModel
+public class CartableItem : BaseModel
 {
     [ForeignKey(nameof(Entity))]
     public int EntityId { get; set; }
@@ -11,6 +11,8 @@ public class ServiceCartable : BaseModel
     public int StepId { get; set; }
 
     public DateTime TimeStamp { get; set; } = DateTime.Now;
+    public string User { get; set; } = "";
+    public string Role { get; set; } = "";
     public string ServiceName { get; set; } = "";
     public string PossibleActions { get; set; } = "";
 

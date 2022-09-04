@@ -109,78 +109,65 @@ public class WfmRepository : IRepository
         return entityLog;
     }
 
-    public UserRoleCartable AddUserRoleCartable(Entity entity, Step step, string user, string role,
-        string possibleActions)
+    public CartableItem AddCartableItem(Entity entity, Step step, string user, string role,string serviceName, string possibleActions)
     {
-        var cartable = new UserRoleCartable
+        var cartableItem = new CartableItem
         {
             Entity = entity,
             Step = step,
             User = user,
             Role = role,
-            PossibleActions = possibleActions
-        };
-        _context.UserRoleCartables.Add(cartable);
-        _context.SaveChanges();
-        return cartable;
-    }
-
-    public bool DeleteUserRoleCartable(int id)
-    {
-        var cartable = _context.UserRoleCartables.FirstOrDefault(c => c.Id == id);
-        if (cartable == null)
-            return false;
-        _context.UserRoleCartables.Remove(cartable);
-        _context.SaveChanges();
-        return true;
-    }
-
-    public UserRoleCartable? GetUserRoleCartableById(int id)
-    {
-        return _context.UserRoleCartables.FirstOrDefault(c => c.Id == id);
-    }
-
-    public List<UserRoleCartable> GetUserCartables(string user)
-    {
-        return _context.UserRoleCartables.Where(c => c.User == user).ToList();
-    }
-
-    public List<UserRoleCartable> GetRoleCartables(string role)
-    {
-        return _context.UserRoleCartables.Where(c => c.Role == role).ToList();
-    }
-
-    public ServiceCartable AddServiceCartable(Entity entity, Step step, string serviceName, string possibleActions)
-    {
-        var cartable = new ServiceCartable
-        {
-            Entity = entity,
-            Step = step,
             ServiceName = serviceName,
             PossibleActions = possibleActions
         };
-        _context.ServiceCartables.Add(cartable);
+        _context.CartableItems.Add(cartableItem);
         _context.SaveChanges();
-        return cartable;
+        return cartableItem;
     }
 
-    public bool DeleteServiceCartable(int id)
+    public bool DeleteCartableItem(int id)
     {
-        var cartable = _context.ServiceCartables.FirstOrDefault(c => c.Id == id);
-        if (cartable == null)
+        var cartableItem = _context.CartableItems.FirstOrDefault(c => c.Id == id);
+        if (cartableItem == null)
             return false;
-        _context.ServiceCartables.Remove(cartable);
+        _context.CartableItems.Remove(cartableItem);
         _context.SaveChanges();
         return true;
     }
 
-    public ServiceCartable? GetServiceCartableById(int id)
+    public CartableItem? GetCartableItemById(int id)
     {
-        return _context.ServiceCartables.FirstOrDefault(c => c.Id == id);
+        return _context.CartableItems
+            .Include(x => x.Entity)
+            .ThenInclude(x => x.EntityLogs)
+            .Include(x => x.Step)
+            .FirstOrDefault(c => c.Id == id);
     }
 
-    public List<ServiceCartable> GetServiceCartables(string serviceName)
+    public List<CartableItem> GetUserCartable(string user)
     {
-        return _context.ServiceCartables.Where(c => c.ServiceName == serviceName).ToList();
+        return _context.CartableItems
+            .Include(x => x.Entity)
+            .ThenInclude(x => x.EntityLogs)
+            .Include(x => x.Step)
+            .Where(c => c.User == user).ToList().ToList();
+    }
+
+    public List<CartableItem> GetRoleCartable(string role)
+    {
+        return _context.CartableItems
+            .Include(x => x.Entity)
+            .ThenInclude(x => x.EntityLogs)
+            .Include(x => x.Step)
+            .Where(c => c.Role == role).ToList().ToList();
+    }
+
+    public List<CartableItem> GetServiceCartable(string serviceName)
+    {
+        return _context.CartableItems
+            .Include(x => x.Entity)
+            .ThenInclude(x => x.EntityLogs)
+            .Include(x => x.Step)
+            .Where(c => c.ServiceName == serviceName).ToList().ToList();
     }
 }

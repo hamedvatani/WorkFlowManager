@@ -11,7 +11,7 @@ namespace WorkFlowManager.Core;
 public class ManagerService : BackgroundService
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly ConcurrentDictionary<int, int> _startTickets = new();
+    private readonly ConcurrentBag<ManagerServiceJob> _jobs = new();
 
     public ManagerService(IServiceScopeFactory serviceScopeFactory)
     {
@@ -22,20 +22,36 @@ public class ManagerService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            Parallel.ForEach(_startTickets, item =>
+            Parallel.ForEach(_jobs, item =>
             {
-                DoStartWorkFlowWorks(item.Key, item.Value);
-                _startTickets.TryRemove(item);
+                if (item.JobType == "StartWorkFlow")
+                    DoStartWorkFlowWorks(item.EntityId, item.WorkFlowId);
+                else if (item.JobType == "SetCartableItemResult")
+                    DoSetCartableItemResultWorks(item.CartableItemId, item.Result);
             });
+            _jobs.Clear();
             await Task.Delay(1000, stoppingToken);
         }
     }
 
-    public MethodResult StartWorkFlow(int entityId, int workFlowId)
+    public void StartWorkFlow(int entityId, int workFlowId)
     {
-        return _startTickets.TryAdd(entityId, workFlowId)
-            ? MethodResult.Ok()
-            : MethodResult.Error("Entity already runs in workflow!");
+        _jobs.Add(new ManagerServiceJob
+        {
+            JobType = "StartWorkFlow",
+            EntityId = entityId,
+            WorkFlowId = workFlowId
+        });
+    }
+
+    public void SetCartableItemResult(int cartableItemId, string result)
+    {
+        _jobs.Add(new ManagerServiceJob
+        {
+            JobType = "SetCartableItemResult",
+            CartableItemId = cartableItemId,
+            Result = result
+        });
     }
 
     private void DoStartWorkFlowWorks(int entityId, int workFlowId)
@@ -46,6 +62,8 @@ public class ManagerService : BackgroundService
             return;
         var entity = repository.GetEntityById(entityId);
         if (entity == null)
+            return;
+        if (entity.Status != EntityStatusEnum.Idle)
             return;
         var workFlows = repository.GetWorkFlows(workFlowId);
         if (workFlows.Count != 1)
@@ -108,18 +126,18 @@ public class ManagerService : BackgroundService
             case ProcessTypeEnum.Service:
                 repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess,
                     step.GetDescription(entity.StarterUser, entity.StarterRole));
-                repository.AddServiceCartable(entity, step, step.ServiceName, GetStepPossibleActions(step));
+                repository.AddCartableItem(entity, step, "", "", step.ServiceName, GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.StarterUserOrRole:
                 repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess,
                     step.GetDescription(entity.StarterUser, entity.StarterRole));
-                repository.AddUserRoleCartable(entity, step, entity.StarterUser, entity.StarterRole,
+                repository.AddCartableItem(entity, step, entity.StarterUser, entity.StarterRole, "",
                     GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.CustomUserOrRole:
                 repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess,
                     step.GetDescription(entity.StarterUser, entity.StarterRole));
-                repository.AddUserRoleCartable(entity, step, step.CustomUser, step.CustomRole,
+                repository.AddCartableItem(entity, step, step.CustomUser, step.CustomRole, "",
                     GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.None:
@@ -164,5 +182,9 @@ public class ManagerService : BackgroundService
     {
         var actions = step.Heads.Select(x => x.Condition).Distinct().ToList();
         return actions.Count == 0 ? "" : string.Join(";", actions);
+    }
+
+    private void DoSetCartableItemResultWorks(int cartableItemId, string result)
+    {
     }
 }

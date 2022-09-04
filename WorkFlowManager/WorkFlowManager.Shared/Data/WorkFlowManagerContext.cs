@@ -10,8 +10,7 @@ public class WorkFlowManagerContext : DbContext
     public DbSet<Flow> Flows { get; set; } = null!;
     public DbSet<Entity> Entities { get; set; } = null!;
     public DbSet<EntityLog> EntityLogs { get; set; } = null!;
-    public DbSet<UserRoleCartable> UserRoleCartables { get; set; } = null!;
-    public DbSet<ServiceCartable> ServiceCartables { get; set; } = null!;
+    public DbSet<CartableItem> CartableItems { get; set; } = null!;
 
     protected WorkFlowManagerContext()
     {

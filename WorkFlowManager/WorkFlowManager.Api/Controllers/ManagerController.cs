@@ -67,7 +67,8 @@ public class ManagerController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        return _manager.AddStarterUserRoleCartableStep(model.WorkFlowId, model.Name, model.StepType, model.Description).ToActionResult(x => new StepDto(x));
+        return _manager.AddStarterUserRoleCartableStep(model.WorkFlowId, model.Name, model.StepType, model.Description)
+            .ToActionResult(x => new StepDto(x));
     }
 
     [HttpPost("AddCustomUserRoleCartableStep")]
@@ -97,5 +98,30 @@ public class ManagerController : ControllerBase
         if (result.IsSuccess)
             _managerService.StartWorkFlow(result.GetResult().Id, model.WorkFlowId);
         return result.ToActionResult(x => new EntityDto(x));
+    }
+
+    [HttpPost("GetUserCartable")]
+    public ActionResult<List<CartableItemDto>> GetUserCartable([FromBody] GetUserCartableDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        return _manager.GetUserCartable(model.User).ToActionResult(x => x.Select(y => new CartableItemDto(y)).ToList());
+    }
+
+    [HttpPost("GetRoleCartable")]
+    public ActionResult<List<CartableItemDto>> GetRoleCartable([FromBody] GetRoleCartableDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        return _manager.GetRoleCartable(model.Role).ToActionResult(x => x.Select(y => new CartableItemDto(y)).ToList());
+    }
+
+    [HttpPost("GetServiceCartable")]
+    public ActionResult<List<CartableItemDto>> GetServiceCartable([FromBody] GetServiceCartableDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        return _manager.GetServiceCartable(model.ServiceName)
+            .ToActionResult(x => x.Select(y => new CartableItemDto(y)).ToList());
     }
 }
