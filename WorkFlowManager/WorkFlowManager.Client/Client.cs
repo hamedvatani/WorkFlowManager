@@ -1,4 +1,5 @@
-﻿using WorkFlowManager.Shared.Models.Dto;
+﻿using WorkFlowManager.Shared;
+using WorkFlowManager.Shared.Models.Dto;
 
 namespace WorkFlowManager.Client;
 
@@ -56,5 +57,25 @@ public class Client
     public MethodResult<EntityDto> StartWorkFlow(StartWorkFlowDto model)
     {
         return _apiClient.CallPostApi<StartWorkFlowDto, EntityDto>("StartWorkFlow", model);
+    }
+
+    public MethodResult<List<CartableItemDto>> GetUserCartable(GetUserCartableDto model)
+    {
+        return _apiClient.CallPostApi<GetUserCartableDto, List<CartableItemDto>>("GetUserCartable", model);
+    }
+
+    public MethodResult<List<CartableItemDto>> GetRoleCartable(GetRoleCartableDto model)
+    {
+        return _apiClient.CallPostApi<GetRoleCartableDto, List<CartableItemDto>>("GetRoleCartable", model);
+    }
+
+    public MethodResult<List<CartableItemDto>> GetServiceCartable(GetServiceCartableDto model)
+    {
+        return _apiClient.CallPostApi<GetServiceCartableDto, List<CartableItemDto>>("GetServiceCartable", model);
+    }
+
+    public MethodResult SetCartableItemResult(SetCartableItemResultDto model)
+    {
+        return _apiClient.CallPostApi("SetCartableItemResult", model);
     }
 }

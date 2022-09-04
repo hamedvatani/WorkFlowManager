@@ -186,5 +186,14 @@ public class ManagerService : BackgroundService
 
     private void DoSetCartableItemResultWorks(int cartableItemId, string result)
     {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var repository = scope.ServiceProvider.GetService<IRepository>();
+        if (repository == null)
+            return;
+        var cartableItem = repository.GetCartableItemById(cartableItemId);
+        if (cartableItem == null)
+            return;
+        if (!cartableItem.PossibleActions.Contains(result))
+            return;
     }
 }

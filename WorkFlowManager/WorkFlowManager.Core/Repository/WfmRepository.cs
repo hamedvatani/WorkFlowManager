@@ -109,7 +109,8 @@ public class WfmRepository : IRepository
         return entityLog;
     }
 
-    public CartableItem AddCartableItem(Entity entity, Step step, string user, string role,string serviceName, string possibleActions)
+    public CartableItem AddCartableItem(Entity entity, Step step, string user, string role, string serviceName,
+        string possibleActions)
     {
         var cartableItem = new CartableItem
         {
@@ -141,6 +142,9 @@ public class WfmRepository : IRepository
             .Include(x => x.Entity)
             .ThenInclude(x => x.EntityLogs)
             .Include(x => x.Step)
+            .ThenInclude(x => x.Heads)
+            .Include(x => x.Step)
+            .ThenInclude(x => x.Tails)
             .FirstOrDefault(c => c.Id == id);
     }
 
@@ -150,6 +154,9 @@ public class WfmRepository : IRepository
             .Include(x => x.Entity)
             .ThenInclude(x => x.EntityLogs)
             .Include(x => x.Step)
+            .ThenInclude(x => x.Heads)
+            .Include(x => x.Step)
+            .ThenInclude(x => x.Tails)
             .Where(c => c.User == user).ToList().ToList();
     }
 
@@ -159,6 +166,9 @@ public class WfmRepository : IRepository
             .Include(x => x.Entity)
             .ThenInclude(x => x.EntityLogs)
             .Include(x => x.Step)
+            .ThenInclude(x => x.Heads)
+            .Include(x => x.Step)
+            .ThenInclude(x => x.Tails)
             .Where(c => c.Role == role).ToList().ToList();
     }
 
@@ -168,6 +178,9 @@ public class WfmRepository : IRepository
             .Include(x => x.Entity)
             .ThenInclude(x => x.EntityLogs)
             .Include(x => x.Step)
+            .ThenInclude(x => x.Heads)
+            .Include(x => x.Step)
+            .ThenInclude(x => x.Tails)
             .Where(c => c.ServiceName == serviceName).ToList().ToList();
     }
 }

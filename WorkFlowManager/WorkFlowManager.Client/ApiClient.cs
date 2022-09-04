@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using WorkFlowManager.Shared;
 
 namespace WorkFlowManager.Client;
 
@@ -27,6 +28,21 @@ public class ApiClient
         catch (Exception e)
         {
             return MethodResult<T2>.Error(e.Message);
+        }
+    }
+
+    public MethodResult CallPostApi<T1>(string methodName, T1 model)
+    {
+        try
+        {
+            var response = _httpClient.PostAsJsonAsync(_baseUri + methodName, model).Result;
+            if (!response.IsSuccessStatusCode)
+                return MethodResult.Error(response.Content.ReadAsStringAsync().Result);
+            return MethodResult.Ok();
+        }
+        catch (Exception e)
+        {
+            return MethodResult.Error(e.Message);
         }
     }
 }

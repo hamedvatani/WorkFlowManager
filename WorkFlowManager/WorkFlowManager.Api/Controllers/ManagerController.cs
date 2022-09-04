@@ -124,4 +124,13 @@ public class ManagerController : ControllerBase
         return _manager.GetServiceCartable(model.ServiceName)
             .ToActionResult(x => x.Select(y => new CartableItemDto(y)).ToList());
     }
+
+    [HttpPost("SetCartableItemResult")]
+    public ActionResult SetCartableItemResult([FromBody] SetCartableItemResultDto model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        _managerService.SetCartableItemResult(model.CartableItemId, model.Result);
+        return Ok();
+    }
 }

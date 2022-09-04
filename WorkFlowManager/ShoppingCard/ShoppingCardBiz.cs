@@ -1,4 +1,5 @@
 ﻿using WorkFlowManager.Client;
+using WorkFlowManager.Shared;
 using WorkFlowManager.Shared.Models;
 using WorkFlowManager.Shared.Models.Dto;
 
@@ -238,5 +239,15 @@ public class ShoppingCardBiz
             return result.GetResult().Id;
         error = result.Message;
         return -1;
+    }
+
+    public MethodResult<List<CartableItemDto>> GetUserCartable(string user)
+    {
+        return _client.GetUserCartable(new GetUserCartableDto {User = user});
+    }
+
+    public MethodResult SetCartableItemResult(SetCartableItemResultDto model)
+    {
+        return _client.SetCartableItemResult(model);
     }
 }
