@@ -11,6 +11,7 @@ public interface IRepository
         string customUser, string customRole, string addOnWorkerDllFileName, string addOnWorkerClassName);
 
     Step? GetStepById(int id);
+    Step? GetNextStep(int stepId, string result);
     Flow AddFlow(Step sourceStep, Step destinationStep, string condition);
     Entity AddEntity(string json, string starterUser, string starterRole);
     void ChangeEntityStatus(Entity entity, EntityStatusEnum status);

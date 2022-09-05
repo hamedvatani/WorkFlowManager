@@ -80,8 +80,7 @@ public class ManagerService : BackgroundService
 
     private void RunStep(Step step, Entity entity, IRepository repository)
     {
-        repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepStart,
-            step.GetDescription(entity.StarterUser, entity.StarterRole));
+        repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepStart, step.GetDescription(entity));
 
         Step? nextStep;
         switch (step.ProcessType)
@@ -91,12 +90,11 @@ public class ManagerService : BackgroundService
                 if (worker == null)
                 {
                     repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepFailed,
-                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker not found!");
+                        step.GetDescription(entity) + ", Worker not found!");
                     return;
                 }
 
-                repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
+                repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess, step.GetDescription(entity));
                 string result;
                 try
                 {
@@ -104,56 +102,52 @@ public class ManagerService : BackgroundService
                 }
                 catch (Exception e)
                 {
-                    repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepFailed,
-                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Worker Exception : " +
+                    repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepFailed, step.GetDescription(entity) +
+                        ", Worker Exception : " +
                         e.Message);
                     return;
                 }
 
                 repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepSucceed,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole) + $", Result : {result}");
+                    step.GetDescription(entity) + $", Result : {result}");
 
-                nextStep = GetNextStep(step, result);
+                nextStep = repository.GetNextStep(step.Id, result);
                 if (nextStep == null)
                 {
                     repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepFailed,
-                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
+                        step.GetDescription(entity) + ", Next step not found!");
                     return;
                 }
 
                 RunStep(nextStep, entity, repository);
                 break;
             case ProcessTypeEnum.Service:
-                repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
+                repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess, step.GetDescription(entity));
                 repository.AddCartableItem(entity, step, "", "", step.ServiceName, GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.StarterUserOrRole:
-                repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
+                repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess, step.GetDescription(entity));
                 repository.AddCartableItem(entity, step, entity.StarterUser, entity.StarterRole, "",
                     GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.CustomUserOrRole:
-                repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
+                repository.AddEntityLog(entity, step, EntityLogStatusEnum.WaitForProcess, step.GetDescription(entity));
                 repository.AddCartableItem(entity, step, step.CustomUser, step.CustomRole, "",
                     GetStepPossibleActions(step));
                 break;
             case ProcessTypeEnum.None:
-                repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepSucceed,
-                    step.GetDescription(entity.StarterUser, entity.StarterRole));
+                repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepSucceed, step.GetDescription(entity));
                 if (step.StepType == StepTypeEnum.End)
                 {
                     repository.ChangeEntityStatus(entity, EntityStatusEnum.Done);
                     break;
                 }
 
-                nextStep = GetNextStep(step, "");
+                nextStep = repository.GetNextStep(step.Id, "");
                 if (nextStep == null)
                 {
                     repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepFailed,
-                        step.GetDescription(entity.StarterUser, entity.StarterRole) + ", Next step not found!");
+                        step.GetDescription(entity) + ", Next step not found!");
                     return;
                 }
 
@@ -162,22 +156,11 @@ public class ManagerService : BackgroundService
         }
     }
 
-    private static Step? GetNextStep(Step step, string condition)
-    {
-        var flow = step.Heads.FirstOrDefault(f => f.Condition == condition);
-        return flow?.DestinationStep;
-    }
-    
     private IWorker? GetStepWorker(Step step)
     {
         return Extensions.GetWorker(step.AddOnWorkerDllFileName, step.AddOnWorkerClassName);
     }
-    
-    private string GetStepServiceName(Step step)
-    {
-        throw new NotImplementedException();
-    }
-    
+
     private string GetStepPossibleActions(Step step)
     {
         var actions = step.Heads.Select(x => x.Condition).Distinct().ToList();
@@ -193,7 +176,30 @@ public class ManagerService : BackgroundService
         var cartableItem = repository.GetCartableItemById(cartableItemId);
         if (cartableItem == null)
             return;
-        if (!cartableItem.PossibleActions.Contains(result))
+        var entity = repository.GetEntityById(cartableItem.EntityId);
+        if (entity == null)
             return;
+        var step = cartableItem.Step;
+        if (!cartableItem.PossibleActions.Contains(result))
+        {
+            repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepFailed,
+                step.GetDescription(entity) + ", Invalid result");
+            return;
+        }
+
+        repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepSucceed,
+            step.GetDescription(entity) + $", Result : {result}");
+
+        var nextStep = repository.GetNextStep(step.Id, result);
+        if (nextStep == null)
+        {
+            repository.AddEntityLog(entity, step, EntityLogStatusEnum.StepFailed,
+                step.GetDescription(entity) + ", Next step not found!");
+            return;
+        }
+
+        RunStep(nextStep, entity, repository);
+
+        repository.DeleteCartableItem(cartableItemId);
     }
 }

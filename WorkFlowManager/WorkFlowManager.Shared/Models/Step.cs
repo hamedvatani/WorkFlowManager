@@ -39,7 +39,7 @@ public class Step : BaseModel
         return Name;
     }
 
-    public string GetDescription(string starterUser = "", string starterRole = "")
+    public string GetDescription(Entity entity)
     {
         string owner = ", Owner : ";
         switch (ProcessType)
@@ -51,7 +51,7 @@ public class Step : BaseModel
                 owner += $"Service : {ServiceName}";
                 break;
             case ProcessTypeEnum.StarterUserOrRole:
-                owner += $"Cartable User,Role : {starterUser},{starterRole}";
+                owner += $"Cartable User,Role : {entity.StarterUser},{entity.StarterRole}";
                 break;
             case ProcessTypeEnum.CustomUserOrRole:
                 owner += $"Cartable User,Role : {CustomUser},{CustomRole}";

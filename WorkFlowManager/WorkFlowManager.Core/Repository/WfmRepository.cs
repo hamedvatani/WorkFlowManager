@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using WorkFlowManager.Shared.Models;
 using WorkFlowManager.Shared.Data;
 
@@ -55,6 +57,18 @@ public class WfmRepository : IRepository
     public Step? GetStepById(int id)
     {
         return _context.Steps.FirstOrDefault(s => s.Id == id);
+    }
+
+    public Step? GetNextStep(int stepId, string result)
+    {
+        var step = _context.Steps.Include(x => x.Heads).ThenInclude(x => x.DestinationStep)
+            .FirstOrDefault(s => s.Id == stepId);
+        if (step == null)
+            return null;
+        var flow = step.Heads.FirstOrDefault(f => f.Condition == result);
+        if (flow == null)
+            return null;
+        return GetStepById(flow.DestinationStepId);
     }
 
     public Flow AddFlow(Step sourceStep, Step destinationStep, string condition)
@@ -136,7 +150,8 @@ public class WfmRepository : IRepository
         return true;
     }
 
-    public CartableItem? GetCartableItemById(int id)
+    private IQueryable<CartableItem> GetCartableItemQuery(int id = 0, string user = "", string role = "",
+        string serviceName = "")
     {
         return _context.CartableItems
             .Include(x => x.Entity)
@@ -145,42 +160,29 @@ public class WfmRepository : IRepository
             .ThenInclude(x => x.Heads)
             .Include(x => x.Step)
             .ThenInclude(x => x.Tails)
-            .FirstOrDefault(c => c.Id == id);
+            .Where(c => (id == 0 || c.Id == id) &&
+                        (user == "" || c.User == user) &&
+                        (role == "" || c.Role == role) &&
+                        (serviceName == "" || c.ServiceName == serviceName));
+    }
+
+    public CartableItem? GetCartableItemById(int id)
+    {
+        return GetCartableItemQuery(id: id).FirstOrDefault();
     }
 
     public List<CartableItem> GetUserCartable(string user)
     {
-        return _context.CartableItems
-            .Include(x => x.Entity)
-            .ThenInclude(x => x.EntityLogs)
-            .Include(x => x.Step)
-            .ThenInclude(x => x.Heads)
-            .Include(x => x.Step)
-            .ThenInclude(x => x.Tails)
-            .Where(c => c.User == user).ToList().ToList();
+        return GetCartableItemQuery(user: user).ToList();
     }
 
     public List<CartableItem> GetRoleCartable(string role)
     {
-        return _context.CartableItems
-            .Include(x => x.Entity)
-            .ThenInclude(x => x.EntityLogs)
-            .Include(x => x.Step)
-            .ThenInclude(x => x.Heads)
-            .Include(x => x.Step)
-            .ThenInclude(x => x.Tails)
-            .Where(c => c.Role == role).ToList().ToList();
+        return GetCartableItemQuery(role: role).ToList();
     }
 
     public List<CartableItem> GetServiceCartable(string serviceName)
     {
-        return _context.CartableItems
-            .Include(x => x.Entity)
-            .ThenInclude(x => x.EntityLogs)
-            .Include(x => x.Step)
-            .ThenInclude(x => x.Heads)
-            .Include(x => x.Step)
-            .ThenInclude(x => x.Tails)
-            .Where(c => c.ServiceName == serviceName).ToList().ToList();
+        return GetCartableItemQuery(serviceName: serviceName).ToList();
     }
 }
