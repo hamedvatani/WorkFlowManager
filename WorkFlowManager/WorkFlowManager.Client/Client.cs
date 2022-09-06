@@ -5,12 +5,10 @@ namespace WorkFlowManager.Client;
 
 public class Client
 {
-    private readonly ClientConfiguration _configuration;
     private readonly ApiClient _apiClient;
 
-    public Client(ClientConfiguration configuration, ApiClient apiClient)
+    public Client(ApiClient apiClient)
     {
-        _configuration = configuration;
         _apiClient = apiClient;
     }
 

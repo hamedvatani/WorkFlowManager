@@ -6,13 +6,11 @@ namespace WorkFlowManager.Core;
 
 public class Manager
 {
-    private readonly ManagerConfiguration _configuration;
     private readonly IRepository _repository;
 
-    public Manager(ManagerConfiguration configuration, IRepository repository)
+    public Manager(IRepository repository)
     {
         _repository = repository;
-        _configuration = configuration;
         _repository = repository;
     }
 

@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using WorkFlowManager.Shared.Models;
 using WorkFlowManager.Shared.Data;
 

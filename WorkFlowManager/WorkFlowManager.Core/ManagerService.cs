@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WorkFlowManager.Core.Repository;
@@ -61,9 +60,7 @@ public class ManagerService : BackgroundService
         if (repository == null)
             return;
         var entity = repository.GetEntityById(entityId);
-        if (entity == null)
-            return;
-        if (entity.Status != EntityStatusEnum.Idle)
+        if (entity is not {Status: EntityStatusEnum.Idle})
             return;
         var workFlows = repository.GetWorkFlows(workFlowId);
         if (workFlows.Count != 1)
