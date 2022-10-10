@@ -2,7 +2,7 @@
 
 namespace WorkFlowManager.Shared.Models.Dto;
 
-public class SetCartableItemResultDto
+public sealed class SetCartableItemResultDto
 {
     [Required]
     public int CartableItemId { get; set; }

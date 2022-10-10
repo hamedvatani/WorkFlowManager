@@ -2,7 +2,7 @@
 
 namespace WorkFlowManager.Shared.Models.Dto;
 
-public class GetUserCartableDto
+public sealed class GetUserCartableDto
 {
     [Required]
     public string User { get; set; } = "";

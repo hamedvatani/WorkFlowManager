@@ -2,7 +2,7 @@
 
 namespace WorkFlowManager.Shared.Models.Dto;
 
-public class StartWorkFlowDto
+public sealed class StartWorkFlowDto
 {
     [Required]
     public string Json { get; set; } = "";

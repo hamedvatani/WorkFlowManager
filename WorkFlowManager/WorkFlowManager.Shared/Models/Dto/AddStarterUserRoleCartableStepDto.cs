@@ -2,7 +2,7 @@
 
 namespace WorkFlowManager.Shared.Models.Dto;
 
-public class AddStarterUserRoleCartableStepDto
+public sealed class AddStarterUserRoleCartableStepDto
 {
     [Required]
     public int WorkFlowId { get; set; }

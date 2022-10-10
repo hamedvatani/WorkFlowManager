@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkFlowManager.Shared.Models;
 using WorkFlowManager.Shared.Data;
+using WorkFlowManager.Shared.Models;
 
 namespace WorkFlowManager.Core.Repository;
 
@@ -25,7 +25,7 @@ public class WfmRepository : IRepository
 
     public WorkFlow AddWorkFlow(string name)
     {
-        var workFlow = new WorkFlow {Name = name};
+        var workFlow = new WorkFlow { Name = name };
         _context.WorkFlows.Add(workFlow);
         _context.SaveChanges();
         return workFlow;

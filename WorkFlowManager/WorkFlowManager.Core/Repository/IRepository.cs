@@ -17,7 +17,10 @@ public interface IRepository
     void ChangeEntityStatus(Entity entity, EntityStatusEnum status);
     Entity? GetEntityById(int id);
     EntityLog AddEntityLog(Entity entity, Step step, EntityLogStatusEnum logType, string description);
-    CartableItem AddCartableItem(Entity entity, Step step, string user, string role, string serviceName, string possibleActions);
+
+    CartableItem AddCartableItem(Entity entity, Step step, string user, string role, string serviceName,
+        string possibleActions);
+
     bool DeleteCartableItem(int id);
     CartableItem? GetCartableItemById(int id);
     List<CartableItem> GetUserCartable(string user);

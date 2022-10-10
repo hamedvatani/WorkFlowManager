@@ -2,7 +2,7 @@
 
 namespace WorkFlowManager.Shared.Models.Dto;
 
-public class AddEndStepDto
+public sealed class AddEndStepDto
 {
     [Required]
     public int WorkFlowId { get; set; }

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace WorkFlowManager.Shared.Models;
 
@@ -18,6 +18,7 @@ public class EntityLog : BaseModel
     public EntityLogStatusEnum LogType { get; set; }
 
     public string Description { get; set; } = "";
+ 
     public virtual Entity Entity { get; set; } = null!;
     public virtual Step Step { get; set; } = null!;
 }

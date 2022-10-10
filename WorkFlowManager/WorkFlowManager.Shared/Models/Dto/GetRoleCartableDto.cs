@@ -2,7 +2,7 @@
 
 namespace WorkFlowManager.Shared.Models.Dto;
 
-public class GetRoleCartableDto
+public sealed class GetRoleCartableDto
 {
     [Required]
     public string Role { get; set; } = "";

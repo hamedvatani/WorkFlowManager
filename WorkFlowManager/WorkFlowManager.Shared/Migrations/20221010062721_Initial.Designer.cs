@@ -12,14 +12,14 @@ using WorkFlowManager.Shared.Data;
 namespace WorkFlowManager.Shared.Migrations
 {
     [DbContext(typeof(WorkFlowManagerContext))]
-    [Migration("20220904102020_Initial")]
+    [Migration("20221010062721_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("ProductVersion", "6.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);

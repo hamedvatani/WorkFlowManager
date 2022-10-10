@@ -1,6 +1,6 @@
 ﻿namespace WorkFlowManager.Shared.Models.Dto;
 
-public class CartableItemDto
+public sealed class CartableItemDto
 {
     public int Id { get; set; }
     public int EntityId { get; set; }
